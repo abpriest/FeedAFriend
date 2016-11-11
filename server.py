@@ -15,12 +15,16 @@ app = Flask(__name__)
 #  except:
 #    print("Can't connect to database")
 
+@app.route('/dashboard')
+def showDash():
+    return render_template('index.html');
+
 @app.route('/')
 def mainIndex():
     print (time.strftime("%I:%M:%S"))
     now = time.strftime("%c")
     print ("Current time %s"  % now )
-    return render_template('/profile/templates/index.html')
+    return render_template('index.html')
 
 #@app.route('/projects')
 #def showProj():
