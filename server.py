@@ -20,7 +20,7 @@ def mainIndex():
     print (time.strftime("%I:%M:%S"))
     now = time.strftime("%c")
     print ("Current time %s"  % now )
-    return render_template('index.html')
+    return render_template('/profile/templates/index.html')
 
 #@app.route('/projects')
 #def showProj():
