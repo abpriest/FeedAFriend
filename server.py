@@ -1,3 +1,4 @@
+import time
 import psycopg2
 import psycopg2.extras
 import os
@@ -16,9 +17,10 @@ app = Flask(__name__)
 
 @app.route('/')
 def mainIndex():
-#    pageName = 'About'
-#    aboutMe = {'company': 'N8bitAnimations', 'sDate':'August 2015', 'platform': 'Android devices'}
-    return render_template('index2.html')#, active='home', aboutMe=aboutMe, header=pageName)
+    print (time.strftime("%I:%M:%S"))
+    now = time.strftime("%c")
+    print ("Current time %s"  % now )
+    return render_template('index.html')
 
 #@app.route('/projects')
 #def showProj():
@@ -61,3 +63,4 @@ def mainIndex():
 # start the server
 if __name__ == '__main__':
     app.run(host=os.getenv('IP', '0.0.0.0'), port =int(os.getenv('PORT', 8080)), debug=True)
+
