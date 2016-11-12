@@ -132,7 +132,7 @@
     <div class="panel-body">Name</div>
      <div class="panel-body">username</div>
       <div class="panel-body">Email</div>
-    <div class="panel-footer">PF</div>
+    <div class="panel-footer">Save changes button</div>
 </div>
 </div>
 </div>
@@ -141,21 +141,21 @@
         
         {% if userT == "g" %}
         <table align="center">
-          <td>Give</td>
+          <td><a href="#">Give</a></td>
           <td><label class="switch">
                 syn<input type="checkbox" name="checkfield" id="g0-01" onchange="doalert(this)" unchecked>
                 <div class="slider round"></div>
               </label></td>
-          <td>Take</td>
+          <td><a href="#">Take</a></td>
         </table>
        {% else %}
        <table align="center">
-          <td>Give</td>
+          <td><a href="#">Give</a></td>
           <td><label class="switch">
                 syn<input type="checkbox" name="checkfield" id="g0-01" onchange="doalert(this)" checked>
                 <div class="slider round"></div>
               </label></td>
-          <td>Take</td>
+          <td><a href="#">Take</a></td>
         </table>
        {% endif %}
 <script>
