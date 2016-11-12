@@ -15,7 +15,7 @@ app = Flask(__name__)
 #  except:
 #    print("Can't connect to database")
 
-@app.route('/dashboard', methods=['POST'])
+@app.route('/dashboard', methods=['GET','POST'])
 def dash():
     return render_template('dashboard.html')
 
