@@ -15,9 +15,10 @@ app = Flask(__name__)
 #  except:
 #    print("Can't connect to database")
 
-@app.route('/dashboard')
-def showDash():
-    return render_template('index.html');
+@app.route('/dashboard', methods=['POST'])
+def dash():
+    return render_template('dashboard.html')
+
 
 @app.route('/')
 def mainIndex():
