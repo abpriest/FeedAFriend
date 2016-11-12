@@ -19,10 +19,13 @@ app = Flask(__name__)
 def dash():
  if request.method == 'POST':
   #Check login stuff
+  #giver or taker?
+  userType = "g"
   print("post")
-  return render_template('newsFeed.html')
+  return render_template('newsFeed.html', userT = userType)
  else:
-  return render_template('newsFeed.html')
+  userType = "g"
+  return render_template('newsFeed.html', userT = userType)
 
 
 @app.route('/')
