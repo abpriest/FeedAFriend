@@ -17,15 +17,20 @@ app = Flask(__name__)
 
 @app.route('/dashboard', methods=['GET','POST'])
 def dash():
-    return render_template('dashboard.html')
+ if request.method == 'POST':
+  #Check login stuff
+  print("post")
+  return render_template('newsFeed.html')
+ else:
+  return render_template('newsFeed.html')
 
 
 @app.route('/')
 def mainIndex():
-    print (time.strftime("%I:%M:%S"))
-    now = time.strftime("%c")
-    print ("Current time %s"  % now )
-    return render_template('index.html')
+ print (time.strftime("%I:%M:%S"))
+ now = time.strftime("%c")
+ print ("Current time %s"  % now )
+ return render_template('index.html')
 
 #@app.route('/projects')
 #def showProj():
