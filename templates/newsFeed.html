@@ -4,7 +4,87 @@
 
 {% if userT == "g" %}
 <!-- giver -->
-  <div class="row">
+  <form method="POST" action="">
+      <div class="row">
+        
+        <div class="col-md-12">
+        <div class="well">  
+            <h3>Available today?</h3>
+            <table align="center">
+					<tr><td>Breakfast</td><td><input type="text" id="firstname" name="firstname" /></td></tr>
+					<tr><td>Lunch</td><td><input type="text" id="lastname" name="lastname" /></td></tr>
+					<tr><td>Dinner</td><td><select name="hr"><option>1</option></select><select name="min"><option>2</option></select><select name="AmPm">3</select></td>
+			
+					<input type="number" id="year" name="year" min="1900" max="2016" step="1" value="2011" size="4"/></td></tr>
+					
+					
+					<tr><td>Location (city)</td><td><input type="text" name="city" id="city"/> 
+					
+					<select name="state">
+					<option>AL</option>
+					<option>AK</option>
+					<option>AZ</option>
+					<option>AR</option>
+					<option>CA</option>
+					<option>CO</option>
+					<option>CT</option>
+					<option>DE</option>
+					<option>DC</option>
+					<option>FL</option>
+					<option>GA</option>
+					<option>HI</option>
+					<option>ID</option>
+					<option>IL</option>
+					<option>IN</option>
+					<option>IA</option>
+					<option>KS</option>
+					<option>KY</option>
+					<option>LA</option>
+					<option>ME</option>
+					<option>MD</option>
+					<option>MA</option>
+					<option>MI</option>
+					<option>MN</option>
+					<option>MS</option>
+					<option>MO</option>
+					<option>MT</option>
+					<option>NE</option>
+					<option>NV</option>
+					<option>NH</option>
+					<option>NJ</option>
+					<option>NM</option>
+					<option>NY</option>
+					<option>NC</option>
+					<option>ND</option>
+					<option>OH</option>
+					<option>OK</option>
+					<option>OR</option>
+					<option>PA</option>
+					<option>RI</option>
+					<option>SC</option>
+					<option>SD</option>
+					<option>TN</option>
+					<option>TX</option>
+					<option>UT</option>
+					<option>VT</option>
+					<option>VA</option>
+					<option>WA</option>
+					<option>WV</option>
+					<option>WI</option>
+					<option>WY</option>
+					</select></td></tr>
+					
+					
+					<tr><td><input type="submit" value="Submit Availability" /></td><td><input type="submit" value="Not Available" /></td></tr>
+					</table>
+            <!--<input type="radio" name="available"/>Yes
+            <input type="radio" name="available"/>No-->
+            
+          </div>
+        </div>    
+      </div>
+  </form>
+<!--  <div class="row">
     <div class="col-md-12">
       <div class="well">
        <h3>Availability for </h3>
@@ -134,7 +214,7 @@
       <p>30</p>
     </div>
     
-  </div>
+  </div> -->
  
   <!--
   <div class="row">
