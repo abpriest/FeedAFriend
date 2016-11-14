@@ -2,18 +2,19 @@ import time
 import psycopg2
 import psycopg2.extras
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
+
 app = Flask(__name__)
+app.secret_key = os.urandom(24).encode('hex')
 
-
-#def connectToDB():
-#  connectionString = 'dbname=music user=postgres password=kirbyk9 host=localhost'
-#  connectionString = 'dbname=people user=guy password=12345 host=localhost'
-#  print connectionString
-#  try:
-#    return psycopg2.connect(connectionString)
-#  except:
-#    print("Can't connect to database")
+def connectToDB():
+  connectionString = 'dbname=user user=user password=mealswipes123 host=localhost'
+  connectionString = 'dbname=profile user=user password=mealswipes123 host=localhost'
+  print connectionString
+  try:
+    return psycopg2.connect(connectionString)
+  except:
+    print("Can't connect to database")
 
 @app.route('/dashboard', methods=['GET','POST'])
 def dash():
@@ -27,9 +28,16 @@ def dash():
   userType = "g"
   return render_template('newsFeed.html', userT = userType)
 
-
-@app.route('/')
+@app.route('/', methods=['GET'])
 def mainIndex():
+ #conn = connectToDB()
+ #cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+ #try:
+  #cur.execute("SELECT * FROM users WHERE password = crypt(%s, password) AND username = %s", session['pw'], session['username'])
+ #except: 
+  #print("Invalid username or password!")
+ #results = cur.fetchall()
+    
  print (time.strftime("%I:%M:%S"))
  now = time.strftime("%c")
  print ("Current time %s"  % now )
