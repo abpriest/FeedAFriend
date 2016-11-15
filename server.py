@@ -29,7 +29,7 @@ def dash():
     session['pass']=request.form['password']
     print(session['user'])
     print(session['pass'])
-    query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = %s ", (session['user'], session['pass']))
+    query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf')) ", (session['user'], session['pass']))
     conn.commit()
     result = cur.execute(query)
     print (result)
@@ -55,16 +55,17 @@ def signup2():
  
   # add new entry into database
   try:
-    cur.execute("""INSERT INTO users(username, password) VALUES(%s, %s)""", 
+    cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')))""", 
      (request.form['username'], request.form['password']) )
     conn.commit()
     
+    userkey = ("SELECT id FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf'))", (request.form['username'], request.form['password']))
     cur.execute("""INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
-     (SELECT id FROM users WHERE password = %s AND username = %s))""", 
-     (request.form['name'], request.form['email'], request.form['usertype'], request.form['password'], request.form['username']) )
+     %s)""", 
+     (request.form['name'], request.form['email'], request.form['usertype']), userkey)
   except:
     print("ERROR inserting into user")
-    print("INSERT INTO users(username, password) VALUES(%s, %s)" %
+    print("TRIED: INSERT INTO users(username, password) VALUES(%s, %s)" %
      (request.form['username'], request.form['password']) )
     print("""Tried: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
      (SELECT id FROM users WHERE password = %s AND username = %s))""" %
