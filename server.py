@@ -1,39 +1,92 @@
+#SELECT * FROM users WHERE password = crypt('testpassword', password) AND username = 'testuser';
+
 import time
 import psycopg2
 import psycopg2.extras
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
+
 app = Flask(__name__)
+app.secret_key = os.urandom(24).encode('hex')
 
+def connectToDB():
+  connectionString = 'dbname=feedfriend user=student password=mealswipes123 host=localhost'
+  print connectionString
+  try:
+    return psycopg2.connect(connectionString)
+  except:
+    print("Can't connect to database")
 
-#def connectToDB():
-#  connectionString = 'dbname=music user=postgres password=kirbyk9 host=localhost'
-#  connectionString = 'dbname=people user=guy password=12345 host=localhost'
-#  print connectionString
-#  try:
-#    return psycopg2.connect(connectionString)
-#  except:
-#    print("Can't connect to database")
-
-@app.route('/dashboard', methods=['GET','POST'])
+@app.route('/dashboard', methods=['POST'])
 def dash():
- if request.method == 'POST':
-  #Check login stuff
-  #giver or taker?
-  userType = "g"
-  print("post")
-  return render_template('newsFeed.html', userT = userType)
- else:
-  userType = "g"
-  return render_template('newsFeed.html', userT = userType)
+  conn = connectToDB()
+  cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+  #if request.method == 'POST':
+    #Check login stuff
+    #giver or taker?
+  try:
+    session['user']=request.form['username']
+    session['pass']=request.form['password']
+    print(session['user'])
+    print(session['pass'])
+    query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf')) ", (session['user'], session['pass']))
+    conn.commit()
+    result = cur.execute(query)
+    print (result)
+    return render_template('newsFeed.html')
+    
+  except: 
+    print("Error")
+    conn.rollback()
+    return render_template('login.html')
+    
+    #userType = "g"
+    #return render_template('newsFeed.html', userT = userType)
+  #results = cur.fetchall()
+ 
+@app.route('/signup')
+def signup():
+  return render_template('signup.html')
 
+@app.route('/signup', methods=['POST'])
+def signup2():
+  conn = connectToDB()
+  cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+ 
+  # add new entry into database
+  try:
+    cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')))""", 
+     (request.form['username'], request.form['password']) )
+    conn.commit()
+    
+    userkey = ("SELECT id FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf'))", (request.form['username'], request.form['password']))
+    cur.execute("""INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
+     %s)""", 
+     (request.form['name'], request.form['email'], request.form['usertype']), userkey)
+  except:
+    print("ERROR inserting into user")
+    print("TRIED: INSERT INTO users(username, password) VALUES(%s, %s)" %
+     (request.form['username'], request.form['password']) )
+    print("""Tried: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
+     (SELECT id FROM users WHERE password = %s AND username = %s))""" %
+      (request.form['name'], request.form['email'], request.form['usertype'], request.form['password'], request.form['username']) )
+    conn.rollback()
+    
+  conn.commit()
+
+  return render_template('login.html')
+ 
+  #print (time.strftime("%I:%M:%S"))
+  #now = time.strftime("%c")
+  #print ("Current time %s"  % now )'''
 
 @app.route('/')
-def mainIndex():
+def login():
+
  print (time.strftime("%I:%M:%S"))
  now = time.strftime("%c")
  print ("Current time %s"  % now )
- return render_template('landingPage.html')
+ return render_template('login.html')
 
 #@app.route('/projects')
 #def showProj():

@@ -1,0 +1,52 @@
+{% extends "landingPage.html" %}
+
+{%block content %}
+<!-- Navigation -->
+    <nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">Feed-a-Friend</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="/signup">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="intro-text">
+                <h1>Feed-a-Friend</h1>
+                <form method="post" action="/dashboard">
+                    <p><input class="form-control" type="text" id="username" name="username" placeholder="Username"></p>
+                    <input class="form-control" type="password" id="password" name="password" placeholder="Password" />
+
+                    <br>
+                    <p><input class="intro-text btn" type="submit" value="login" name="submit"/></p>
+                
+                </form>
+                <a href="#about" class="page-scroll footer">What is Feed-a-friend?</a>
+                
+            </div>
+        </div>
+    </header>
+{% endblock %}
