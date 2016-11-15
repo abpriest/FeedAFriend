@@ -1,5 +1,5 @@
 /*password = mealswipes*/
-CREATE EXTENSION pgcrypto;
+
 
 DROP DATABASE IF EXISTS feedfriend;
 CREATE DATABASE feedfriend;
@@ -8,6 +8,9 @@ DROP ROLE IF EXISTS student;
 CREATE ROLE student WITH password 'mealswipes123' LOGIN;
 
 \c feedfriend
+
+CREATE EXTENSION pgcrypto;
+
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id serial NOT NULL,
@@ -39,7 +42,7 @@ GRANT ALL ON profile_id_seq TO student;
 GRANT ALL ON profile_userid_seq TO student;
 
 
-INSERT INTO users(username, password) VALUES('testuser', 'testpassword');
-INSERT INTO profile(name, email, usertype, userid) VALUES('test', 'test@umw.edu', 'g', (SELECT id FROM users WHERE password = 'testpassword' AND username = 'testuser'));
+INSERT INTO users(username, password) VALUES('testuser', crypt('testpassword',gen_salt('bf')));
+INSERT INTO profile(name, email, usertype, userid) VALUES('test', 'test@umw.edu', 'g', (SELECT id FROM users WHERE password = crypt('testpassword',password) AND username = 'testuser'));
 
 SELECT * FROM users WHERE password = crypt('testpassword', password) AND username = 'testuser';
