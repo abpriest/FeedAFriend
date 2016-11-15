@@ -18,7 +18,7 @@ CREATE TABLE profile (
     id serial NOT NULL,
     name varchar(20) NOT NULL,
     email varchar(15) NOT NULL,
-    giverec boolean NOT NULL,
+    usertype varchar(1) NOT NULL,
     image bytea,
     PRIMARY KEY (id),
     
@@ -28,7 +28,9 @@ CREATE TABLE profile (
     REFERENCES users (id)
 );
 
+
+
 INSERT INTO users(username, password) VALUES('testuser', crypt('testpassword', gen_salt('bf')));
-INSERT INTO profile(name, email, giverec) VALUES('test', 'test@umw.edu', true);
+INSERT INTO profile(name, email, giverec) VALUES('test', 'test@umw.edu', 'g');
 
 SELECT * FROM users WHERE password = crypt('testpassword', password) AND username = 'testuser';
