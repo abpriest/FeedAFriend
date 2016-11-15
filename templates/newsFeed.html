@@ -4,7 +4,67 @@
 
 {% if userT == "g" %}
 <!-- giver -->
-  <div class="row">
+  <form method="POST" action="#">
+      <div class="row">
+        
+        <div class="col-md-12">
+        <div class="well">  
+            <h3>Available today?</h3>
+            <table style="width:100%">
+              <tbody align="center">
+              <tr align="justify">
+                <td><label>Breakfast</label></td>
+                <td><label><input type="checkbox" name="7am"/>7-8</label>
+                  <label><input type="checkbox" name="8am"/>8-9</label>
+                  <label><input type="checkbox" name="9am"/>9-10</label>
+                  <label><input type="checkbox" name="10am"/>10-11</label></td>
+                <!--<td>Lunch</td>
+                <td>Dinner</td>-->
+              </tr>
+              <tr align="justify">
+                
+                  
+                <td><label>Lunch</label></td>
+                <td>
+                  <label><input type="checkbox" name="11am"/>11-12</label>
+                  <label><input type="checkbox" name="12pm"/>12-1</label>
+                  <label><input type="checkbox" name="1pm"/>1-2</label>
+                  <label><input type="checkbox" name="2pm"/>2-3</label>
+                  <label><input type="checkbox" name="3pm"/>3-4</label>
+                  <label><input type="checkbox" name="4pm"/>4-5</label>
+                  </td>
+                  </tr>
+                <tr align="justify">
+                    <td><label>Dinner</label></td>
+                    <td>
+                  <label><input type="checkbox" name="5pm"/>5-6</label>
+                  <label><input type="checkbox" name="6pm"/>6-7</label>
+                  <label><input type="checkbox" name="7pm"/>7-8</label>
+                  <label><input type="checkbox" name="8pm"/>8-9</label>
+                  <label><input type="checkbox" name="9pm"/>9-10</label>
+                  <label><input type="checkbox" name="10pm"/>10-11</label>
+                  <label><input type="checkbox" name="11pm"/>11-12</label>
+                  <label><input type="checkbox" name="12am"/>12-1</label>
+                  </td>
+                
+              </tr>
+					    <tr>
+					      <td></td>
+					      <td>
+					        <input type="submit" value="Submit Availability" />
+					      </td>
+					      <td></td>
+					     </tr>
+					     </tbody>
+					</table>
+            <!--<input type="radio" name="available"/>Yes
+            <input type="radio" name="available"/>No-->
+            
+          </div>
+        </div>    
+      </div>
+  </form>
+<!--  <div class="row">
     <div class="col-md-12">
       <div class="well">
        <h3>Availability for </h3>
@@ -134,7 +194,7 @@
       <p>30</p>
     </div>
     
-  </div>
+  </div> -->
  
   <!--
   <div class="row">
