@@ -21,20 +21,25 @@ def connectToDB():
 def dash():
   conn = connectToDB()
   cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-  if request.method == 'POST':
-    try:
+  #if request.method == 'POST':
     #Check login stuff
     #giver or taker?
-      userType = "g"
-      session['user']=request.form['username']
-      session['password']=request.form['pw']
-   
-      query = cur.mogrify("SELECT * FROM users WHERE password = crypt(%s, password) AND username = %s", (session['pw'], session['username']))
-   
-      return render_template('newsFeed.html', userT = userType)
-    except: 
-      print("Error")
-      conn.rollback()
+  try:
+    session['user']=request.form['username']
+    session['pass']=request.form['password']
+    print(session['user'])
+    print(session['pass'])
+    query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = %s ", (session['user'], session['pass']))
+    conn.commit()
+    result = cur.execute(query)
+    print (result)
+    return render_template('newsFeed.html')
+    
+  except: 
+    print("Error")
+    conn.rollback()
+    return render_template('login.html')
+    
     #userType = "g"
     #return render_template('newsFeed.html', userT = userType)
   #results = cur.fetchall()
@@ -50,16 +55,20 @@ def signup2():
  
   # add new entry into database
   try:
-    cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')));""", 
+    cur.execute("""INSERT INTO users(username, password) VALUES(%s, %s)""", 
      (request.form['username'], request.form['password']) )
-    cur.execute("""INSERT INTO profile (name, email, usertype) VALUES (%s, %s);""",
-     (request.form['name'], request.form['email'], request.form['usertype']) )
+    conn.commit()
+    
+    cur.execute("""INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
+     (SELECT id FROM users WHERE password = %s AND username = %s))""", 
+     (request.form['name'], request.form['email'], request.form['usertype'], request.form['password'], request.form['username']) )
   except:
     print("ERROR inserting into user")
-    print("Tried: INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')));" %
+    print("INSERT INTO users(username, password) VALUES(%s, %s)" %
      (request.form['username'], request.form['password']) )
-    print("Tried: INSERT INTO profile (name, email, usertype) VALUES (%s, %s, %s);" %
-     (request.form['name'], request.form['email'], request.form['usertype']) )
+    print("""Tried: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
+     (SELECT id FROM users WHERE password = %s AND username = %s))""" %
+      (request.form['name'], request.form['email'], request.form['usertype'], request.form['password'], request.form['username']) )
     conn.rollback()
     
   conn.commit()
