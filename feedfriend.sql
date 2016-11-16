@@ -43,3 +43,6 @@ INSERT INTO users(username, password) VALUES('testuser', 'testpassword');
 INSERT INTO profile(name, email, usertype, userid) VALUES('test', 'test@umw.edu', 'g', (SELECT id FROM users WHERE password = 'testpassword' AND username = 'testuser'));
 
 SELECT * FROM users WHERE password = crypt('testpassword', password) AND username = 'testuser';
+
+INSERT INTO users(username, password) VALUES('test123', crypt('test123', gen_salt('bf')));
+INSERT INTO profile(name, email, usertype, userid) VALUES('test123', 'test123@umw.edu', 'g', (SELECT id FROM users WHERE password = 'testpassword' AND username = 'testuser'));

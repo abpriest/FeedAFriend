@@ -29,10 +29,10 @@ def dash():
     session['pass']=request.form['password']
     print(session['user'])
     print(session['pass'])
-    query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf')) ", (session['user'], session['pass']))
+    cur.execute("SELECT * FROM users WHERE username = %s AND password = %s) ", (request.form['username'], request.form['password']))
     conn.commit()
-    result = cur.execute(query)
-    print (result)
+    #result = cur.execute(query)
+    #print (result)
     return render_template('newsFeed.html')
     
   except: 
@@ -40,6 +40,7 @@ def dash():
     conn.rollback()
     return render_template('login.html')
     
+  
     #userType = "g"
     #return render_template('newsFeed.html', userT = userType)
   #results = cur.fetchall()
@@ -55,11 +56,12 @@ def signup2():
  
   # add new entry into database
   try:
-    cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')))""", 
+    cur.execute("""INSERT INTO users(username, password) VALUES(%s, %s)""", 
      (request.form['username'], request.form['password']) )
     conn.commit()
     
-    userkey = ("SELECT id FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf'))", (request.form['username'], request.form['password']))
+    #execute does not like subquery
+    userkey = ("SELECT id FROM users WHERE username = %s AND password = %s)", (request.form['username'], request.form['password']))
     cur.execute("""INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
      %s)""", 
      (request.form['name'], request.form['email'], request.form['usertype']), userkey)
@@ -68,7 +70,7 @@ def signup2():
     print("TRIED: INSERT INTO users(username, password) VALUES(%s, %s)" %
      (request.form['username'], request.form['password']) )
     print("""Tried: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
-     (SELECT id FROM users WHERE password = %s AND username = %s))""" %
+     %s)""" %
       (request.form['name'], request.form['email'], request.form['usertype'], request.form['password'], request.form['username']) )
     conn.rollback()
     
