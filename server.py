@@ -33,7 +33,7 @@ def dash():
     conn.commit()
     result = cur.execute(query)
     print (result)
-    return render_template('newsFeed.html')
+    return render_template('newsFeed.html', userT = 'g')
     
   except: 
     print("Error")
