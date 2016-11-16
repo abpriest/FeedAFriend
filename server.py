@@ -36,7 +36,7 @@ def dash():
             if (cur.rowcount==1):
                 
                 
-                return render_template('newsFeed.html') 
+                return render_template('newsFeed.html', userT = "g") 
             else:
                 print("Invalid username or password!")
                 conn.rollback()
