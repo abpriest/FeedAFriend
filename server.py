@@ -1,5 +1,3 @@
-#SELECT * FROM users WHERE password = crypt('testpassword', password) AND username = 'testuser';
-
 import time
 import psycopg2
 import psycopg2.extras
@@ -27,20 +25,18 @@ def dash():
             session['pass']=request.form['password']
             print(session['user'])
             print(session['pass'])
-            query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, password) ", 
+            query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, password) " , 
                 (session['user'], session['pass']))
             cur.execute(query)
             results=cur.fetchall()
             conn.commit()
             print (results)
             if (cur.rowcount==1):
-                
-                
-                return render_template('newsFeed.html') 
+              return render_template('newsFeed.html') 
             else:
-                print("Invalid username or password!")
-                conn.rollback()
-                return render_template('login.html')
+              print("Invalid username or password!")
+              conn.rollback()
+              return render_template('login.html')
         except:
             print("Error!")
             conn.rollback()
