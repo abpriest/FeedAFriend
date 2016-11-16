@@ -1,4 +1,3 @@
-/*password = mealswipes*/
 DROP DATABASE IF EXISTS feedfriend;
 CREATE DATABASE feedfriend;
 
@@ -30,7 +29,7 @@ CREATE TABLE users (
     PRIMARY KEY (id),
     
     userid serial,
-    CONSTRAINT profile_userid_fkq
+    CONSTRAINT profile_id_fk
     FOREIGN KEY (userid)
     REFERENCES profile (id)
 
@@ -42,3 +41,6 @@ GRANT ALL ON users_userid_seq TO student;
 
 INSERT INTO profile(name, email, usertype) VALUES('test123', 'test123@umw.edu', 'g');
 INSERT INTO users(username, password) VALUES('test123', crypt('test123', gen_salt('bf')));
+
+INSERT INTO profile(name, email, usertype) VALUES('test111', 'test111@umw.edu', 'g');
+INSERT INTO users(username, password) VALUES('test111', crypt('test111', gen_salt('bf')));
