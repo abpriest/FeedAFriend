@@ -17,33 +17,36 @@ def connectToDB():
   except:
     print("Can't connect to database")
 
-@app.route('/dashboard', methods=['POST'])
+@app.route('/dashboard', methods=['GET', 'POST'])
 def dash():
-  conn = connectToDB()
-  cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-  #if request.method == 'POST':
-    #Check login stuff
-    #giver or taker?
-  try:
-    session['user']=request.form['username']
-    session['pass']=request.form['password']
-    print(session['user'])
-    print(session['pass'])
-    query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf')) ", (session['user'], session['pass']))
-    conn.commit()
-    result = cur.execute(query)
-    print (result)
-    return render_template('newsFeed.html', userT = 'g')
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    if request.method == 'POST':
+        try:
+            session['user']=request.form['username']
+            session['pass']=request.form['password']
+            print(session['user'])
+            print(session['pass'])
+            query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, password) ", 
+                (session['user'], session['pass']))
+            cur.execute(query)
+            results=cur.fetchall()
+            conn.commit()
+            print (results)
+            if (cur.rowcount==1):
+                
+                
+                return render_template('newsFeed.html') 
+            else:
+                print("Invalid username or password!")
+                conn.rollback()
+                return render_template('login.html')
+        except:
+            print("Error!")
+            conn.rollback()
+            return render_template('login.html')
+        conn.commit()
     
-  except: 
-    print("Error")
-    conn.rollback()
-    return render_template('login.html')
-    
-    #userType = "g"
-    #return render_template('newsFeed.html', userT = userType)
-  #results = cur.fetchall()
- 
 @app.route('/signup')
 def signup():
   return render_template('signup.html')
@@ -52,33 +55,29 @@ def signup():
 def signup2():
   conn = connectToDB()
   cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
- 
-  # add new entry into database
+    
   try:
+    cur.execute("""INSERT INTO profile(name, email, usertype) VALUES(%s, %s, %s)""", 
+     (request.form['name'], request.form['email'], request.form['usertype']))
+    conn.commit()
     cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')))""", 
      (request.form['username'], request.form['password']) )
     conn.commit()
-    
-    userkey = ("SELECT id FROM users WHERE username = %s AND password = crypt(%s, gen_salt('bf'))", (request.form['username'], request.form['password']))
-    cur.execute("""INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
-     %s)""", 
-     (request.form['name'], request.form['email'], request.form['usertype']), userkey)
+    return render_template('login.html')
+  
   except:
     print("ERROR inserting into user")
     print("TRIED: INSERT INTO users(username, password) VALUES(%s, %s)" %
      (request.form['username'], request.form['password']) )
-    print("""Tried: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, 
-     (SELECT id FROM users WHERE password = %s AND username = %s))""" %
-      (request.form['name'], request.form['email'], request.form['usertype'], request.form['password'], request.form['username']) )
+    print("""TRIED: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s , %s)""" % 
+     (request.form['name'], request.form['email'], request.form['usertype']))
     conn.rollback()
-    
+    return render_template('signup.html')
   conn.commit()
 
-  return render_template('login.html')
- 
-  #print (time.strftime("%I:%M:%S"))
-  #now = time.strftime("%c")
-  #print ("Current time %s"  % now )'''
+#print (time.strftime("%I:%M:%S"))
+#now = time.strftime("%c")
+#print ("Current time %s"  % now )'''
 
 @app.route('/')
 def login():
