@@ -41,6 +41,11 @@
                     <input class="form-control" type="password" id="password" name="password" placeholder="Password" />
 
                     <br>
+                    {% if fail %}
+                    <div style="background-color: #FFF8C6; width: 300px; margin-left: 37%; padding-bottom: 4px; padding-top: 10px;">
+                    <p style="color:red"> Incorrect Username or Password </p>
+                    </div>
+                    {% endif %}
                     <p><input class="intro-text btn" type="submit" value="login" name="submit"/></p>
                 
                 </form>
