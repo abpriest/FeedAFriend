@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS profile;
 CREATE TABLE profile (
     id serial NOT NULL,
     name varchar(20) NOT NULL,
-    email varchar(15) NOT NULL,
+    email varchar(25) NOT NULL,
     usertype varchar(1) NOT NULL,
     image bytea,
     PRIMARY KEY (id)

@@ -15,24 +15,30 @@ def connectToDB():
   except:
     print("Can't connect to database")
 
-@app.route('/dashboard', methods=['GET', 'POST'])
-def dash():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
     if request.method == 'POST':
         try:
             session['user']=request.form['username']
             session['pass']=request.form['password']
             print(session['user'])
             print(session['pass'])
+            
+            #Check for matching username and password
             query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, password) " , 
                 (session['user'], session['pass']))
             cur.execute(query)
             results=cur.fetchall()
             conn.commit()
             print (results)
+            
+            #Check if there is a result 
             if (cur.rowcount==1):
               return render_template('newsFeed.html', userT = "g") 
+            #Incorrect password or not a user
             else:
               print("Invalid username or password!")
               conn.rollback()
@@ -51,32 +57,80 @@ def signup():
 def signup2():
   conn = connectToDB()
   cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    
-  try:
-    cur.execute("""INSERT INTO profile(name, email, usertype) VALUES(%s, %s, %s)""", 
-     (request.form['name'], request.form['email'], request.form['usertype']))
-    conn.commit()
-    cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')))""", 
-     (request.form['username'], request.form['password']) )
-    conn.commit()
-    return render_template('login.html')
+   
+  #Error message
+  message1 = ''
   
-  except:
-    print("ERROR inserting into user")
-    print("TRIED: INSERT INTO users(username, password) VALUES(%s, %s)" %
-     (request.form['username'], request.form['password']) )
-    print("""TRIED: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s , %s)""" % 
-     (request.form['name'], request.form['email'], request.form['usertype']))
-    conn.rollback()
-    return render_template('signup.html')
+  #Search for username
+  query = cur.mogrify("select * from users WHERE username = %s", (request.form['username'], ))
+  cur.execute(query)
+  out = cur.fetchall()
+  userresults = cur.rowcount
   conn.commit()
+  
+  #Search for email
+  query = cur.mogrify("select * from profile WHERE email = %s", (request.form['email'], ))
+  cur.execute(query)
+  out = cur.fetchall()
+  emailresults = cur.rowcount
+  conn.commit()
+  
+  #Get email domain name
+  domain1=request.form['email'][-8:]
+  print(domain1)
+  domain2=request.form['email'][-13:]
+  print(domain2)
+  
+  if (userresults != 0):
+    message1='Username already taken'
+    print("Username already taken")
+    return render_template('signup.html')
+    
+  #Check for matching confirmation password
+  elif(request.form['password'] != request.form['confirmpassword']):
+    message1='Passwords do not match'
+    print("Passwords do not match")
+    return render_template('signup.html')
+  
+  #Check for taken email
+  elif(emailresults != 0):
+    message1='Email already being for an account'
+    print("Email already being used for an account")
+    return render_template('signup.html')
+  
+  #Check for UMW email
+  elif(domain1 != '@umw.edu' and domain2 != '@mail.umw.edu'):
+    message1="Not a UMW email"
+    print("Not a UMW email")
+    return render_template('signup.html')
+  
+  #Sign up user
+  else:  
+    try:
+      cur.execute("""INSERT INTO profile(name, email, usertype) VALUES(%s, %s, %s)""", 
+       (request.form['name'], request.form['email'], request.form['usertype']))
+      conn.commit()
+      cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')))""", 
+       (request.form['username'], request.form['password']) )
+      conn.commit()
+      return render_template('login.html')
+  
+    except:
+      print("ERROR inserting into user")
+      print("TRIED: INSERT INTO users(username, password) VALUES(%s, %s)" %
+       (request.form['username'], request.form['password']) )
+      print("""TRIED: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s , %s)""" % 
+       (request.form['name'], request.form['email'], request.form['usertype']))
+      conn.rollback()
+      return render_template('signup.html')
+    conn.commit()
 
 #print (time.strftime("%I:%M:%S"))
 #now = time.strftime("%c")
 #print ("Current time %s"  % now )'''
 
 @app.route('/')
-def login():
+def home():
 
  print (time.strftime("%I:%M:%S"))
  now = time.strftime("%c")
