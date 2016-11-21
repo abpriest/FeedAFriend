@@ -81,7 +81,9 @@ def signup2():
   domain2=request.form['email'][-13:]
   print(domain2)
   
-  if (userresults != 0):
+  if(request.form['username']='' or request.form['password']='' or request.form['confirmpassword']='' or request.form['email']='' or request.form['name']='')
+  
+  elif (userresults != 0):
     message1='Username already taken'
     print("Username already taken")
     return render_template('signup.html')
