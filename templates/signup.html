@@ -38,10 +38,30 @@
                 <h1>Feed-a-Friend</h1>
                 <form method="post" action="/signup">
                     <p><input class="form-control" type="text" id="username" name="username" placeholder="Username"></p>
+                    {% if uTaken %}
+                    <div style="background-color: #FFF8C6; width: 300px; margin-left: 37%; padding-bottom: 4px; padding-top: 10px;">
+                    <p style="color:red"> Username Taken, Try Another </p>
+                    </div>
+                    {% endif %}
                     <p><input class="form-control" type="password" id="password" name="password" placeholder="Password"></p> 
                     <p><input class="form-control" type="password" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password"></p>
+                    {% if noPassMatch %}
+                    <div style="background-color: #FFF8C6; width: 300px; margin-left: 37%; padding-bottom: 4px; padding-top: 10px;">
+                    <p style="color:red"> Passwords Do Not Match </p>
+                    </div>
+                    {% endif %}
                     <p><input class="form-control" type="text" id="name" name="name" placeholder="Name"></p>
                     <p><input class="form-control" type="email" id="email" name="email" placeholder="Email"></p>
+                    {% if eTaken %}
+                    <div style="background-color: #FFF8C6; width: 300px; margin-left: 37%; padding-bottom: 4px; padding-top: 10px;">
+                    <p style="color:red"> Email Taken, Try Another </p>
+                    </div>
+                    {% endif %}
+                    {% if noUMW %}
+                    <div style="background-color: #FFF8C6; width: 300px; margin-left: 37%; padding-bottom: 4px; padding-top: 10px;">
+                    <p style="color:red"> Not a UMW Email </p>
+                    </div>
+                    {% endif %}
                     <p><select name="usertype" id="usertype" placeholder="User Type"></p>
                         <option value="g">Giver</option>
                         <option value="r">Receiver</option>

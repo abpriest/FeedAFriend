@@ -81,7 +81,10 @@ def signup2():
   domain2=request.form['email'][-13:]
   print(domain2)
   
-  if(request.form['username']='' or request.form['password']='' or request.form['confirmpassword']='' or request.form['email']='' or request.form['name']='')
+  if(request.form['username']=='' or request.form['password']=='' or request.form['confirmpassword']=='' or request.form['email']=='' or request.form['name']==''):
+    message1='Error field is empty'
+    print("Error field is empty")
+    return render_template('signup.html')
   
   elif (userresults != 0):
     message1='Username already taken'
@@ -98,13 +101,31 @@ def signup2():
   elif(emailresults != 0):
     message1='Email already being for an account'
     print("Email already being used for an account")
-    return render_template('signup.html')
+    return render_template('signup.html', eTaken = eTaken)
   
   #Check for UMW email
   elif(domain1 != '@umw.edu' and domain2 != '@mail.umw.edu'):
+    noUMW = 'true'
     message1="Not a UMW email"
     print("Not a UMW email")
-    return render_template('signup.html')
+  elif(domain1 != '@umw.edu' and domain2 != '@mail.umw.edu'):
+    message1="Not a UMW email"
+    print("Not a UMW email")
+    return render_template('signup.html', noPassMatch = noPassMatch)
+  
+  #Check for taken email
+  elif(emailresults != 0):
+    eTaken = 'true'
+    message1='Email already being for an account'
+    print("Email already being used for an account")
+    return render_template('signup.html', eTaken = eTaken)
+  
+  #Check for UMW email
+  elif(domain1 != '@umw.edu' and domain2 != '@mail.umw.edu'):
+    noUMW = 'true'
+    message1="Not a UMW email"
+    print("Not a UMW email")
+    return render_template('signup.html', noUMW = noUMW)
   
   #Sign up user
   else:  
