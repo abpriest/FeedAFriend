@@ -19,6 +19,8 @@ def connectToDB():
 def login():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    fail = 'false'
 
     if request.method == 'POST':
         try:
@@ -40,9 +42,10 @@ def login():
               return render_template('newsFeed.html', userT = "g") 
             #Incorrect password or not a user
             else:
+              fail = 'true'
               print("Invalid username or password!")
               conn.rollback()
-              return render_template('login.html')
+              return render_template('login.html', fail = fail)
         except:
             print("Error!")
             conn.rollback()
@@ -57,6 +60,11 @@ def signup():
 def signup2():
   conn = connectToDB()
   cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+  
+  uTaken = 'false'
+  noPassMatch = 'false'
+  eTaken = 'false'
+  noUMW = 'false'
    
   #Error message
   message1 = ''
@@ -87,15 +95,17 @@ def signup2():
     return render_template('signup.html')
   
   elif (userresults != 0):
+    uTaken = 'true'
     message1='Username already taken'
     print("Username already taken")
-    return render_template('signup.html')
+    return render_template('signup.html', uTaken = uTaken)
     
   #Check for matching confirmation password
   elif(request.form['password'] != request.form['confirmpassword']):
+    noPassMatch = 'true'
     message1='Passwords do not match'
     print("Passwords do not match")
-    return render_template('signup.html')
+    return render_template('signup.html', noPassMatch = noPassMatch)
   
   #Check for taken email
   elif(emailresults != 0):
