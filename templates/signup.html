@@ -9,7 +9,7 @@
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand page-scroll" href="#page-top">Feed-a-Friend</a>
+                <a class="navbar-brand page-scroll" href="/">Feed-a-Friend</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -37,6 +37,11 @@
             <div class="intro-text">
                 <h1>Feed-a-Friend</h1>
                 <form method="post" action="/signup">
+                    {% if empty %}
+                    <div style="background-color: #FFF8C6; width: 300px; margin-left: 37%; padding-bottom: 4px; padding-top: 10px;">
+                    <p style="color:red">Please Complete All Fields</p>
+                    </div>
+                    {% endif %}
                     <p><input class="form-control" type="text" id="username" name="username" placeholder="Username"></p>
                     {% if uTaken %}
                     <div style="background-color: #FFF8C6; width: 300px; margin-left: 37%; padding-bottom: 4px; padding-top: 10px;">
@@ -62,10 +67,12 @@
                     <p style="color:red"> Not a UMW Email </p>
                     </div>
                     {% endif %}
-                    <p><select name="usertype" id="usertype" placeholder="User Type"></p>
+                    
+                    <p><select class="dropdown-toggle.btn-primary" name="usertype" id="usertype" placeholder="User Type"></p>
                         <option value="g">Giver</option>
                         <option value="r">Receiver</option>
                     </select>
+                   
                     <br>
                     <p><input class="intro-text btn" type="submit" value="Sign up" name="submit"/></p>
                 
