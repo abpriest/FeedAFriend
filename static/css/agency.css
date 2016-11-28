@@ -272,6 +272,9 @@ header .intro-text input.form-control {
   width: 300px;
   margin-left: 37%;
 }
+header .intro-text select.form-dropdown {
+  color: #000000;
+}
 header .intro-text textarea.form-control {
   height: 236px;
 }
