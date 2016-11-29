@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html ng-app lang="en">
 <head>
   <title>NomNomNom</title>
    <link rel="shortcut icon" href="../static/img/header-bg.jpg">
@@ -8,6 +8,12 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  <!-- socket scripts -N8 -->
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.4/socket.io.js"></script> -->
+  <!--<script src="js/controller.js"></script> -->
+  
   <style>
     /* Set black background color, white text and some padding */
     footer {
@@ -98,10 +104,11 @@
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Home</a></li>
         <li><a href="#">Messages</a></li>
+        <li>Hello {{searchFor}} </li> <!-- socket testing -N8 -->
       </ul>
       <form class="navbar-form navbar-right" role="search">
         <div class="form-group input-group">
-          <input type="text" class="form-control" placeholder="Search..">
+          <input type="text" ng-model="searchFor" class="form-control" placeholder="Search..">
           <span class="input-group-btn">
             <button class="btn btn-default" type="button">
               <span class="glyphicon glyphicon-search"></span>
@@ -110,7 +117,7 @@
         </div>
       </form>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/"><span class="glyphicon glyphicon-user"></span> Logout</a></li>
+        <li><a href="/"><span class="glyphicon glyphicon-user"></span> Logout </a></li>
       </ul>
     </div>
   </div>
@@ -202,16 +209,24 @@ function doalert(checkboxElem) {
     
     <div class="col-sm-2 well">
       <div class="thumbnail">
-        <p>Notifications</p>
-        <p><strong>Welcome</strong></p>
-        
+        <p><strong>Messages</strong></p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+        <p>Welcome</p>
+      </div>
+      
+      <div class="well">
+        <p>ADS</p>
+        <input type="text" class="form-control" placeholder="Search..">
         <button class="btn btn-primary">Info</button>
-      </div>
-      <div class="well">
-        <p>ADS</p>
-      </div>
-      <div class="well">
-        <p>ADS</p>
       </div>
     </div>
   </div>

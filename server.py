@@ -2,6 +2,10 @@ import time
 import psycopg2
 import psycopg2.extras
 import os
+
+import uuid #socket imports -N8
+from flask.ext.socketio import SocketIO, emit #socket imports -N8
+
 from flask import Flask, render_template, request, session
 
 app = Flask(__name__)
