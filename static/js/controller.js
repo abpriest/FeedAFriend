@@ -16,7 +16,13 @@ App.controller('AppController', function($scope){
     };
     
     socket.on('found', function(res){
-       console.log("Results " + res); 
-    });
+       $scope.found = res;
+       
+       var i;
+       for (i =0; i< $scope.found.length; i++){
+        console.log("~ " + $scope.found[i][1]); 
+    
+       }
+     });
     
 });

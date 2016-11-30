@@ -25,10 +25,10 @@ def search(findMe):
     usersFound = searchUsers(findMe)
   
     if len(usersFound) == 0:
-        usersFound = "No results"
-        print("No results")
+        usersFound = [[-1,'No results']]
+        print(usersFound)
     else:
-        print(usersFound[0])
+        print(usersFound)
         
     emit('found', usersFound)
     
