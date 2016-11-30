@@ -39,7 +39,52 @@ def login():
             
             #Check if there is a result 
             if (cur.rowcount==1):
-              return render_template('newsFeed.html', userT = "g") 
+                query = cur.mogrify("SELECT usertype FROM profile WHERE userid = (SELECT id FROM users WHERE username = %s) " , 
+                    (session['user'], ))
+                print(query)
+                cur.execute(query)
+                userT=cur.fetchall()
+                print(userT)
+                conn.commit()
+                
+                #check for breakfast availability
+                cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = 'b' AND userid = (SELECT id FROM users WHERE username = %s) " , 
+                    (session['user'], ))
+                breakfast = cur.fetchall()
+                conn.commit()
+                
+                if(cur.rowcount==0):
+                    print("btest")
+                    breakfast = ''
+                else:
+                    print(breakfast)
+                
+                #check for lunch availability    
+                cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = 'l' AND userid = (SELECT id FROM users WHERE username = %s) " , 
+                    (session['user'], ))
+                lunch = cur.fetchall()
+                conn.commit()
+                
+                if(cur.rowcount==0):
+                    print("ltest")
+                    lunch = ''
+                else:
+                    print(lunch)
+                
+                #check for dinner availability
+                cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = 'd' AND userid = (SELECT id FROM users WHERE username = %s) " , 
+                    (session['user'], ))
+                dinner = cur.fetchall()
+                conn.commit()
+                
+                if(cur.rowcount==0):
+                    print("dtest")
+                    dinner = ''
+                else:
+                    print(dinner)
+                
+                return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner)
+                
             #Incorrect password or not a user
             else:
               fail = 'true'
@@ -47,11 +92,92 @@ def login():
               conn.rollback()
               return render_template('login.html', fail = fail)
         except:
-            print("Error!")
+            print("Error login!")
             conn.rollback()
             return render_template('login.html')
         conn.commit()
     
+@app.route('/editavailability')
+def editavail():
+    return render_template('editavail.html')
+
+@app.route('/updateavailability', methods=['POST'])
+def updateavail():
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    bstart = request.form['bstart']
+    bend = request.form['bend']
+    lstart = request.form['lstart']
+    lend = request.form['lend']
+    dstart = request.form['dstart']
+    dend = request.form['dend']
+    
+    cur.execute("SELECT usertype FROM profile WHERE userid = (SELECT id FROM users WHERE username = %s)", (session['user'],))
+    userT=cur.fetchall()
+    conn.commit()
+    
+    cur.execute("SELECT * FROM availability WHERE userid = (SELECT id FROM users WHERE username = %s)", (session['user'],))
+    cur.fetchall()
+    conn.commit()
+    if(cur.rowcount != 0):
+        cur.execute("DELETE FROM availability WHERE userid = (SELECT id FROM users WHERE username = %s)", (session['user'],))
+        conn.commit()
+        
+    if(request.form['bstart'] != '' and request.form['bend'] != ''):
+        cur.execute("""INSERT INTO availability(mealtype, starttime, endtime, userid) VALUES('b', %s, %s, (SELECT id FROM users WHERE username = %s))""", 
+            (bstart, bend, session['user']))
+        conn.commit()
+        
+    if(request.form['lstart'] != '' and request.form['lend'] != ''):
+        cur.execute("""INSERT INTO availability(mealtype, starttime, endtime, userid) VALUES('l', %s, %s, (SELECT id FROM users WHERE username = %s))""", 
+            (lstart, lend, session['user']))
+        conn.commit()
+        
+    if(request.form['dstart'] != '' and request.form['dend'] != ''):
+        cur.execute("""INSERT INTO availability(mealtype, starttime, endtime, userid) VALUES('d', %s, %s, (SELECT id FROM users WHERE username = %s))""", 
+            (dstart, dend, session['user']))
+        conn.commit()
+    
+    #check for breakfast availability
+    cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = 'b' AND userid = (SELECT id FROM users WHERE username = %s) " , 
+                (session['user'], ))
+    breakfast = cur.fetchall()
+    conn.commit()
+                
+    if(cur.rowcount==0):
+        print("btest")
+        breakfast = ''
+    else:
+        print(breakfast)
+                
+    #check for lunch availability    
+    cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = 'l' AND userid = (SELECT id FROM users WHERE username = %s) " , 
+                (session['user'], ))
+    lunch = cur.fetchall()
+    conn.commit()
+                
+    if(cur.rowcount==0):
+        print("ltest")
+        lunch = ''
+    else:
+        print(lunch)
+                
+    #check for dinner availability
+    cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = 'd' AND userid = (SELECT id FROM users WHERE username = %s) " , 
+                (session['user'], ))
+    dinner = cur.fetchall()
+    conn.commit()
+                
+    if(cur.rowcount==0):
+        print("dtest")
+        dinner = ''
+    else:
+        print(dinner)
+                
+    
+    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner)
+
 @app.route('/signup')
 def signup():
   return render_template('signup.html')
@@ -125,11 +251,11 @@ def signup2():
   #Sign up user
   else:  
     try:
-      cur.execute("""INSERT INTO profile(name, email, usertype) VALUES(%s, %s, %s)""", 
-       (request.form['name'], request.form['email'], request.form['usertype']))
-      conn.commit()
       cur.execute("""INSERT INTO users(username, password) VALUES(%s, crypt(%s, gen_salt('bf')))""", 
        (request.form['username'], request.form['password']) )
+      conn.commit()
+      cur.execute("""INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, (SELECT id FROM users WHERE username = %s))""", 
+       (request.form['name'], request.form['email'], request.form['usertype'], request.form['username']))
       conn.commit()
       return render_template('login.html')
   
@@ -137,8 +263,8 @@ def signup2():
       print("ERROR inserting into user")
       print("TRIED: INSERT INTO users(username, password) VALUES(%s, %s)" %
        (request.form['username'], request.form['password']) )
-      print("""TRIED: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s , %s)""" % 
-       (request.form['name'], request.form['email'], request.form['usertype']))
+      print("""TRIED: INSERT INTO profile(name, email, usertype, userid) VALUES(%s, %s, %s, (SELECT id FROM users WHERE username = %s))""" % 
+       (request.form['name'], request.form['email'], request.form['usertype'], request.form['username']))
       conn.rollback()
       return render_template('signup.html')
     conn.commit()

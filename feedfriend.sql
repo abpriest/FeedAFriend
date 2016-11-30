@@ -8,6 +8,18 @@ CREATE ROLE student WITH password 'mealswipes123' LOGIN;
 
 CREATE EXTENSION pgcrypto;
 
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+    id serial NOT NULL,
+    username text NOT NULL,
+    password text NOT NULL,
+    PRIMARY KEY (id)
+    
+);
+
+GRANT ALL ON users TO student;
+GRANT ALL ON users_id_seq TO student;
+
 DROP TABLE IF EXISTS profile;
 CREATE TABLE profile (
     id serial NOT NULL,
@@ -15,32 +27,40 @@ CREATE TABLE profile (
     email varchar(25) NOT NULL,
     usertype varchar(1) NOT NULL,
     image bytea,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    
+    userid int,
+    CONSTRAINT users_id_fk
+    FOREIGN KEY (userid)
+    REFERENCES users (id)
 );
 
 GRANT ALL ON profile TO student;
 GRANT ALL ON profile_id_seq TO student;
 
-DROP TABLE IF EXISTS users;
-CREATE TABLE users (
+DROP TABLE IF EXISTS availability;
+CREATE TABLE availability (
     id serial NOT NULL,
-    username text NOT NULL,
-    password text NOT NULL,
+    mealtype varchar(1) NOT NULL,
+    starttime varchar(4),
+    endtime varchar(4),
     PRIMARY KEY (id),
     
-    userid serial,
-    CONSTRAINT profile_id_fk
+    userid int,
+    CONSTRAINT users_id_fk
     FOREIGN KEY (userid)
-    REFERENCES profile (id)
-
+    REFERENCES users (id)
+    
 );
 
-GRANT ALL ON users TO student;
-GRANT ALL ON users_id_seq TO student;
-GRANT ALL ON users_userid_seq TO student;
+GRANT ALL ON availability TO student;
+GRANT ALL ON availability_id_seq TO student;
 
-INSERT INTO profile(name, email, usertype) VALUES('test123', 'test123@umw.edu', 'g');
-INSERT INTO users(username, password) VALUES('test123', crypt('test123', gen_salt('bf')));
+INSERT INTO users(username, password) VALUES('testuser', crypt('testpassword', gen_salt('bf')));
+INSERT INTO profile(name, email, usertype, userid) VALUES('testuser', 'test@umw.edu', 'g', (SELECT id FROM users WHERE username = 'testuser'));
 
-INSERT INTO profile(name, email, usertype) VALUES('test111', 'test111@umw.edu', 'g');
-INSERT INTO users(username, password) VALUES('test111', crypt('test111', gen_salt('bf')));
+INSERT INTO users(username, password) VALUES('testg', crypt('testg', gen_salt('bf')));
+INSERT INTO profile(name, email, usertype, userid) VALUES('testg', 'testgiver@umw.edu', 'g', (SELECT id FROM users WHERE username = 'testg'));
+
+INSERT INTO users(username, password) VALUES('testr', crypt('testr', gen_salt('bf')));
+INSERT INTO profile(name, email, usertype, userid) VALUES('testr', 'testreceiver@umw.edu', 'r', (SELECT id FROM users WHERE username = 'testr'));

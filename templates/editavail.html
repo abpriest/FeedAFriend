@@ -1,0 +1,93 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<form method="POST" action="/updateavailability" >
+      <div class="row">
+        
+        <div class="col-md-12">
+        <div class="well">  
+            <h3>Available today?</h3>
+            <table style="width:100%">
+              <tbody align="center">
+              <tr align="justify">
+                <td><label>Breakfast</label></td>
+                
+                <td><label> Start Time </label><select class="dropdown-toggle.btn-primary" name="bstart" id="bstart">
+                  <option name="bstart" value=""/>---</option>
+                  <option name="bstart" value="6AM"/>6AM</option>
+                  <option name="bstart" value="7AM"/>7AM</option>
+                  <option name="bstart" value="8AM"/>8AM</option>
+                  <option name="bstart" value="9AM"/>9AM</option>
+                  <option name="bstart" value="10AM"/>10AM</option></td>
+                
+                <td><label> End Time </label><select class="dropdown-toggle.btn-primary" name="bend" id="bend">
+                  <option value=""/>---</option>
+                  <option value="7AM"/>7AM</option>
+                  <option value="8AM"/>8AM</option>
+                  <option value="9AM"/>9AM</option>
+                  <option value="10AM"/>10AM</option>
+                  <option value="11AM"/>11AM</option></td>
+                <!--<td>Lunch</td>
+                <td>Dinner</td>-->
+              </tr>
+              <tr align="justify">
+                
+                  
+                <td><label>Lunch</label></td>
+                
+                <td><label> Start Time </label><select class="dropdown-toggle.btn-primary" name="lstart" id="lstart">
+                  <option name="lstart" value=""/>---</option>
+                  <option name="lstart" value="11AM"/>11AM</option>
+                  <option name="lstart" value="12PM"/>12PM</option>
+                  <option name="lstart" value="1PM"/>1PM</option>
+                  <option name="lstart" value="2PM"/>2PM</option>
+                  <option name="lstart" value="3PM"/>3PM</option></td>
+                
+                <td><label> End Time </label><select class="dropdown-toggle.btn-primary" name="lend" id="lend">
+                  <option value=""/>---</option>
+                  <option value="12PM"/>12PM</option>
+                  <option value="1PM"/>1PM</option>
+                  <option value="2PM"/>2PM</option>
+                  <option value="3PM"/>3PM</option>
+                  <option value="4PM"/>4PM</option></td>
+                
+                </tr>
+                <tr align="justify">
+                    
+                <td><label>Dinner</label></td>
+                    
+                <td><label> Start Time </label><select class="dropdown-toggle.btn-primary" name="dstart" id="dstart">
+                  <option name="dstart" value=""/>---</option>
+                  <option name="dstart" value="4PM"/>4PM</option>
+                  <option name="dstart" value="5PM"/>5PM</option>
+                  <option name="dstart" value="6PM"/>6PM</option>
+                  <option name="dstart" value="7PM"/>7PM</option>
+                  <option name="dstart" value="8PM"/>8PM</option></td>
+                
+                <td><label> End Time </label><select class="dropdown-toggle.btn-primary" name="dend" id="dend">
+                  <option name="lend" value=""/>---</option>
+                  <option name="lend" value="5PM"/>5PM</option>
+                  <option name="lend" value="6PM"/>6PM</option>
+                  <option name="lend" value="7PM"/>7PM</option>
+                  <option name="lend" value="8PM"/>8PM</option>
+                  <option name="lend" value="9PM"/>9PM</option></td>
+                
+              </tr>
+					    <tr>
+					      <td></td>
+					      <td>
+					        <input type="submit" value="Submit Availability" />
+					      </td>
+					      <td></td>
+					     </tr>
+					     </tbody>
+					</table>
+
+            
+          </div>
+        </div>    
+      </div>
+  </form>
+</div>
+
+{% endblock %}
