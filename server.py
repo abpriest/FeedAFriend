@@ -24,17 +24,17 @@ def search(findMe):
     
     if findMe == 'Breakfast' or findMe == 'Lunch' or findMe == 'Dinner':
         print(findMe)
-        #searchMealTime(findMe)
+        results = searchMealTime(findMe)
     else:
-        usersFound = searchUsers(findMe)
+        results = searchUsers(findMe)
   
-        if len(usersFound) == 0:
-            usersFound = [[-1,'No results']]
-            print(usersFound)
-        else:
-            print(usersFound)
-        
-        emit('found', usersFound)
+    if len(results) == 0:
+        results = [[-1,'No results']]
+        print(results)
+    else:
+        print(results)
+    
+    emit('found', results)
 
 def searchMealTime(findMealTime):
     print("looking for meal times")
@@ -46,7 +46,7 @@ def searchMealTime(findMealTime):
         #print('booyah')
         #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
             
-        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findMealTime))
+        cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (findMealTime))
         
     except:
         print ('search failed')

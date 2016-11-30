@@ -15,13 +15,21 @@ App.controller('AppController', function($scope){
         
     };
     
-    socket.on('found', function(res){
+    socket.on('found', function(res,srch_type){
        $scope.found = res;
-       
        var i;
+       if ($scope.found[0].length > 2){
+           for (i =0; i< $scope.found.length; i++){
+        console.log("~ " + $scope.found[i][3] + " is available from " + $scope.found[i][1] + " - " + $scope.found[i][2]); 
+    
+       }
+       } else {
+       
+       
        for (i =0; i< $scope.found.length; i++){
         console.log("~ " + $scope.found[i][1]); 
     
+       }
        }
      });
     
