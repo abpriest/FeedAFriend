@@ -13,12 +13,48 @@ app.secret_key = os.urandom(24).encode('hex')
 
 socketio = SocketIO(app) #socket -N8
 
-#connects the socket from the server side
+#connects the socket from the server side ##########################################################
 @socketio.on('connect')
 def socketConnect():
     print 'Connected from server'
     
-
+@socketio.on('sSearch')
+def search(findMe):
+    print('Looking for ' + findMe)
+    
+    usersFound = searchUsers(findMe)
+  
+    if len(usersFound) == 0:
+        usersFound = "No results"
+        print("No results")
+    else:
+        print(usersFound[0])
+        
+    emit('found', usersFound)
+    
+def searchUsers(findUser):
+    print('Looking for user ' + findUser)
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #print('booyah')
+        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
+            
+        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findUser))
+        
+    except:
+        print ('search failed')
+        
+    results=cur.fetchall()
+        
+    #print (results)
+    
+    return(results)
+    
+#####################################################################################################
+    
 def connectToDB():
   connectionString = 'dbname=feedfriend user=student password=mealswipes123 host=localhost'
   print connectionString
