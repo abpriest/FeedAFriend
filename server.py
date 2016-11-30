@@ -11,6 +11,75 @@ from flask import Flask, render_template, request, session
 app = Flask(__name__)
 app.secret_key = os.urandom(24).encode('hex')
 
+socketio = SocketIO(app) #socket -N8
+
+#connects the socket from the server side ##########################################################
+@socketio.on('connect')
+def socketConnect():
+    print 'Connected from server'
+    
+@socketio.on('sSearch')
+def search(findMe):
+    print('Looking for ' + findMe)
+    
+    if findMe == 'Breakfast' or findMe == 'Lunch' or findMe == 'Dinner':
+        print(findMe)
+        #searchMealTime(findMe)
+    else:
+        usersFound = searchUsers(findMe)
+  
+        if len(usersFound) == 0:
+            usersFound = [[-1,'No results']]
+            print(usersFound)
+        else:
+            print(usersFound)
+        
+        emit('found', usersFound)
+
+def searchMealTime(findMealTime):
+    print("looking for meal times")
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #print('booyah')
+        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
+            
+        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findMealTime))
+        
+    except:
+        print ('search failed')
+        
+    results=cur.fetchall()
+        
+    #print (results)
+    
+    return(results)
+    
+def searchUsers(findUser):
+    print('Looking for user ' + findUser)
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #print('booyah')
+        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
+            
+        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findUser))
+        
+    except:
+        print ('search failed')
+        
+    results=cur.fetchall()
+        
+    #print (results)
+    
+    return(results)
+    
+#####################################################################################################
+    
 def connectToDB():
   connectionString = 'dbname=feedfriend user=student password=mealswipes123 host=localhost'
   print connectionString
@@ -416,5 +485,5 @@ def home():
 
 # start the server
 if __name__ == '__main__':
-    app.run(host=os.getenv('IP', '0.0.0.0'), port =int(os.getenv('PORT', 8080)), debug=True)
+    socketio.run(app,host=os.getenv('IP', '0.0.0.0'), port =int(os.getenv('PORT', 8080)), debug=True)
 
