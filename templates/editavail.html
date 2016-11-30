@@ -1,5 +1,19 @@
 {% extends "dashboard.html" %}
 
+{% block profile %}
+
+    <div class="panel-body">Username: {{username}}</div>
+  {% for profinfo in profinfo %}
+    <div class="panel-body">Name: {{profinfo['name']}}</div>
+    <div class="panel-body">Email: {{profinfo['email']}}</div>
+  {% endfor %}
+  {% for userT in userT %}
+    <div class="panel-body">User Type: {{userT[0]}}</div>
+  {% endfor %}
+    <div class="panel-footer"><a href="/editprofile">Edit Profile</a></div>
+  
+{% endblock %}
+
 {% block content %}
 <form method="POST" action="/updateavailability" >
       <div class="row">

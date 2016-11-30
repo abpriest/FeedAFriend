@@ -1,8 +1,22 @@
 {% extends "dashboard.html" %}
 
-{% block content %}
+{% block profile %}
 
-{% if userT == [['g']] %}
+    <div class="panel-body">Username: {{username}}</div>
+  {% for profinfo in profinfo %}
+    <div class="panel-body">Name: {{profinfo['name']}}</div>
+    <div class="panel-body">Email: {{profinfo['email']}}</div>
+  {% endfor %}
+  {% for userT in userT %}
+    <div class="panel-body">User Type: {{userT[0]}}</div>
+  {% endfor %}
+    <div class="panel-footer"><a href="/editprofile">Edit Profile</a></div>
+  
+{% endblock %}
+
+{% block content %}
+{% for userT in userT %}
+{% if userT[0] == 'Giver' %}
 <!-- giver -->
 
       <div class="row">
@@ -32,7 +46,7 @@
       </div>
 </div>
 
-{% elif userT == [['r']] %}
+{% elif userT[0] == 'Receiver' %}
 <!-- taker -->
 
       <div class="row">
@@ -57,5 +71,5 @@
 
 </div>
 {% endif %}
-
+{% endfor %}
 {% endblock %}

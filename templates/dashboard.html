@@ -98,11 +98,11 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Feed A Friend</a>
+      <a class="navbar-brand" href="/">Feed A Friend</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
+        <li class="active"><a href="/">Home</a></li>
         <li><a href="#">Messages</a></li>
         <li>Hello {{searchFor}} </li> <!-- socket testing -N8 -->
       </ul>
@@ -137,10 +137,7 @@
       
 </div>
 <div id="collapse1" class="panel-collapse collapse">
-    <div class="panel-body">Name</div>
-     <div class="panel-body">Username</div>
-      <div class="panel-body">Email</div>
-    <div class="panel-footer">Save changes button</div>
+  {% block profile %}{% endblock %}
 </div>
 </div>
 </div>
@@ -166,14 +163,15 @@
           <td><a href="#">Take</a></td>
         </table>
        {% endif %}
+       
 <script>
-function doalert(checkboxElem) {
+/*function doalert(checkboxElem) {
   if (checkboxElem.checked) {
     alert("checked")
   } else {
     alert("notchecked")
   }
-}
+}*/
 </script>
         <p>
           <span class="label label-default">News</span>

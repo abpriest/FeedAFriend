@@ -1,0 +1,43 @@
+{% extends "dashboard.html" %}
+
+{% block profile %}
+
+    <div class="panel-body">Username: {{username}}</div>
+  {% for profinfo in profinfo %}
+    <div class="panel-body">Name: {{profinfo['name']}}</div>
+    <div class="panel-body">Email: {{profinfo['email']}}</div>
+  {% endfor %}
+  {% for userT in userT %}
+    <div class="panel-body">User Type: {{userT[0]}}</div>
+  {% endfor %}
+    <div class="panel-footer"><a href="/editprofile">Edit Profile</a></div>
+  
+{% endblock %}
+
+{% block content %}
+ <div class="row">
+        
+        <div class="col-md-12">
+        <div class="well">  
+            <h4>Edit Profile</h4>
+            <p>Edit edit of the following user information.</p>
+            <table style="width:100%">
+              <tbody align="justify">
+                <form method="POST" action="/updateprofile">
+                    <tr align="center">{{message}}</tr>
+                    <tr align="center"><td>Username: <input type="text" id="username" name="username"></td></tr>
+                    <tr align="center"><td>Name: <input type="text" id="name" name="name"></td></tr>
+                    <tr align="center"><td>New Password: <input type="password" id="newpassword" name="newpassword"></td></tr>
+                    <tr align="center"><td>Confirm Password: <input type="password" id="confirmpassword" name="confirmpassword"></td></tr>
+                    <tr align="center"><td>User Type: <input type="radio" id="usertype" name="usertype" value="g"> Giver
+                                <input type="radio" id="usertype" name="usertype" value="r"> Receiver</td></tr>
+                    <tr align="center"><td><input type="submit" value="Done Editing"/></td></tr>
+                </form>
+					   </tbody>
+					</table>
+
+          </div>
+        </div>    
+      </div>
+</div>
+{% endblock %}
