@@ -142,60 +142,79 @@ def editpro():
     dinner=getDinner()
     return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'], message = message1)   
 
-@app.route('/updateprofile', methods=['GET','POST'])
+@app.route('/updateprofile', methods=['POST'])
 def updatepro():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
-    profinfo=getProf()
-    userT=getUserT()
-    breakfast=getBreak()
-    lunch=getLunch()
-    dinner=getDinner()
-    
     #change username
-    if(request.form['username'] != ''):
+    if(request.form['username'] != '' ):
+        print("in username")
         #check for taken username
-        cur.execute("""SELECT * FROM users WHERE username = %s""", (request.form['username'],))
-        cur.fetchall()
+        cur.execute("SELECT * FROM users WHERE username = %s", (request.form['username'],))
+        results=cur.fetchall()
+        print(results)
         conn.commit()
         
         if(cur.rowcount == 0):
-            cur.execute("""UPDATE users SET username = %s WHERE username = %s""", 
+            results=cur.mogrify("UPDATE users SET username = %s WHERE username = %s", 
                 (request.form['username'], session['user']))
-            session['user']=request.form['username']
+            cur.execute(results)
+            print(results)
             conn.commit()
+            session['user']=request.form['username']
         else:
+            profinfo=getProf()
+            userT=getUserT()
+            breakfast=getBreak()
+            lunch=getLunch()
+            dinner=getDinner()
             message1=" Username taken."
             return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'], message = message1)
     
     #change name
     if(request.form['name'] != ''):
-        cur.execute("""UPDATE profile SET name = %s WHERE userid = (SELECT id FROM users WHERE username = %s)""", 
+        print("in name")
+        results=cur.mogrify("UPDATE profile SET name = %s WHERE userid = (SELECT id FROM users WHERE username = %s)", 
                 (request.form['name'], session['user']))
+        cur.execute(results)
+        
         conn.commit()
-    
+        print(results)
     #change password
     if(request.form['confirmpassword'] != '' and request.form['newpassword'] != '' ):
+        print("in password")
         if(request.form['confirmpassword'] == request.form['newpassword']):
-            cur.execute("""UPDATE users SET password = %s WHERE username = %s""", 
+            results=cur.mogrify("UPDATE users SET password = %s WHERE username = %s", 
                 (request.form['newpassword'], session['user']))
+            cur.execute(results)
+            print(results)
             conn.commit()
         else:
             profinfo=getProf()
+            userT=getUserT()
+            breakfast=getBreak()
+            lunch=getLunch()
+            dinner=getDinner()
             message1=" Passwords do not match."
             return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'], message = message1)
+    
     #change usertype
     if(request.form['usertype'] != ''):
-        cur.execute("""UPDATE profile SET usertype = (SELECT id FROM usertype WHERE userT = %s) WHERE userid = (SELECT id FROM users WHERE username = %s)""", 
+        print("in usertype")
+        results=cur.mogrify("UPDATE profile SET usertype = (SELECT id FROM usertype WHERE userT = %s) WHERE userid = (SELECT id FROM users WHERE username = %s)", 
                 (request.form['usertype'], session['user']))
+        print(results)
+        cur.execute(results)
         conn.commit()
-
+        
+    
     profinfo=getProf()
     userT=getUserT()
     breakfast=getBreak()
     lunch=getLunch()
     dinner=getDinner()
+                
     return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
     
 @app.route('/editavailability')

@@ -67,10 +67,25 @@
                     <p style="color:red"> Not a UMW Email </p>
                     </div>
                     {% endif %}
-                    
-                    <p><select class="form-dropdown" name="usertype" id="usertype" placeholder="User Type"></p>
-                        <option value="Giver">User Type: Giver</option>
-                        <option value="Receiver">User Type: Receiver</option>
+
+
+<style>                   
+select{
+    color: #C0C0C0;
+}
+option
+{
+    color: #C0C0C0;
+}
+option:first-child
+{
+    color: #C0C0C0;
+}
+</style>
+                    <p><select class="form-dropdown" name="usertype" id="usertype" placeholder="User Type" ></p>
+                        <option selected disabled><font color="black">Please select a user type</font></option>
+                        <option value="Giver">Giver</option>
+                        <option value="Receiver">Receiver</option>
                     </select>
                    
                     <br>
