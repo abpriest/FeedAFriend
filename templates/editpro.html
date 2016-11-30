@@ -24,11 +24,12 @@
             <table style="width:100%">
               <tbody align="justify">
                 <form method="POST" action="/updateprofile">
+
                     <tr align="center">{{message}}</tr>
-                    <tr align="center"><td>Username: <input type="text" id="username" name="username"></td></tr>
-                    <tr align="center"><td>Name: <input type="text" id="name" name="name"></td></tr>
-                    <tr align="center"><td>New Password: <input type="password" id="newpassword" name="newpassword"></td></tr>
-                    <tr align="center"><td>Confirm Password: <input type="password" id="confirmpassword" name="confirmpassword"></td></tr>
+                    <tr align="center"><td>Username: <input type="text" id="username" name="username" size=63%></td></tr>
+                    <tr align="center"><td>Name: <input type="text" id="name" name="name" size=63%></></td></tr>
+                    <tr align="center"><td>New Password: <input type="password" id="newpassword" name="newpassword" size=63%></></td></tr>
+                    <tr align="center"><td>Confirm Password: <input type="password" id="confirmpassword" name="confirmpassword" size=63%></></td></tr>
                     <tr align="center"><td>User Type: <input type="radio" id="usertype" name="usertype" value="Giver"> Giver
                                 <input type="radio" id="usertype" name="usertype" value="Receiver"> Receiver</td></tr>
                     <tr align="center"><td><input type="submit" value="Done Editing"/></td></tr>
