@@ -4,6 +4,7 @@ App.controller('AppController', function($scope){
     var socket = io.connect('https://' + document.domain + ':' + location.port);
     
     $scope.found = [];
+    $scope.found2 = [];
     
     socket.on('connect', function(){
        console.log('Connected from controller'); 
@@ -20,6 +21,7 @@ App.controller('AppController', function($scope){
        var i;
        if ($scope.found[0].length > 2){
            for (i =0; i< $scope.found.length; i++){
+            $scope.found2[i] = $scope.found[i][3] + " is available for " + $scope.found[i][0] + " from " + $scope.found[i][1] + " - " + $scope.found[i][2];
         console.log("~ " + $scope.found[i][3] + " is available from " + $scope.found[i][1] + " - " + $scope.found[i][2]); 
     
        }
@@ -27,6 +29,7 @@ App.controller('AppController', function($scope){
        
        
        for (i =0; i< $scope.found.length; i++){
+           $scope.found2[i] = "~ " + $scope.found[i][1];
         console.log("~ " + $scope.found[i][1]); 
     
        }
