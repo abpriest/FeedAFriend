@@ -13,73 +13,6 @@ app.secret_key = os.urandom(24).encode('hex')
 
 socketio = SocketIO(app) #socket -N8
 
-#connects the socket from the server side ##########################################################
-@socketio.on('connect')
-def socketConnect():
-    print 'Connected from server'
-    
-@socketio.on('sSearch')
-def search(findMe):
-    print('Looking for ' + findMe)
-    
-    if findMe == 'Breakfast' or findMe == 'Lunch' or findMe == 'Dinner':
-        print(findMe)
-        #searchMealTime(findMe)
-    else:
-        usersFound = searchUsers(findMe)
-  
-        if len(usersFound) == 0:
-            usersFound = [[-1,'No results']]
-            print(usersFound)
-        else:
-            print(usersFound)
-        
-        emit('found', usersFound)
-
-def searchMealTime(findMealTime):
-    print("looking for meal times")
-    
-    conn = connectToDB()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    
-    try:
-        #print('booyah')
-        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
-            
-        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findMealTime))
-        
-    except:
-        print ('search failed')
-        
-    results=cur.fetchall()
-        
-    #print (results)
-    
-    return(results)
-    
-def searchUsers(findUser):
-    print('Looking for user ' + findUser)
-    
-    conn = connectToDB()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    
-    try:
-        #print('booyah')
-        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
-            
-        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findUser))
-        
-    except:
-        print ('search failed')
-        
-    results=cur.fetchall()
-        
-    #print (results)
-    
-    return(results)
-    
-#####################################################################################################
-    
 def connectToDB():
   connectionString = 'dbname=feedfriend user=student password=mealswipes123 host=localhost'
   print connectionString
@@ -185,11 +118,12 @@ def updatepro():
     if(request.form['confirmpassword'] != '' and request.form['newpassword'] != '' ):
         print("in password")
         if(request.form['confirmpassword'] == request.form['newpassword']):
-            results=cur.mogrify("UPDATE users SET password = %s WHERE username = %s", 
+            results=cur.mogrify("UPDATE users SET password = crypt(%s, gen_salt('bf')) WHERE username = %s", 
                 (request.form['newpassword'], session['user']))
             cur.execute(results)
             print(results)
             conn.commit()
+            print(results)
         else:
             profinfo=getProf()
             userT=getUserT()
@@ -486,4 +420,6 @@ def home():
 # start the server
 if __name__ == '__main__':
     socketio.run(app,host=os.getenv('IP', '0.0.0.0'), port =int(os.getenv('PORT', 8080)), debug=True)
+    #app.run(host=os.getenv('IP', '0.0.0.0'), port =int(os.getenv('PORT', 8080)), debug=True)
+
 
