@@ -22,15 +22,40 @@ def socketConnect():
 def search(findMe):
     print('Looking for ' + findMe)
     
-    usersFound = searchUsers(findMe)
-  
-    if len(usersFound) == 0:
-        usersFound = [[-1,'No results']]
-        print(usersFound)
+    if findMe == 'Breakfast' or findMe == 'Lunch' or findMe == 'Dinner':
+        print(findMe)
+        #searchMealTime(findMe)
     else:
-        print(usersFound)
+        usersFound = searchUsers(findMe)
+  
+        if len(usersFound) == 0:
+            usersFound = [[-1,'No results']]
+            print(usersFound)
+        else:
+            print(usersFound)
         
-    emit('found', usersFound)
+        emit('found', usersFound)
+
+def searchMealTime(findMealTime):
+    print("looking for meal times")
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #print('booyah')
+        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
+            
+        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findMealTime))
+        
+    except:
+        print ('search failed')
+        
+    results=cur.fetchall()
+        
+    #print (results)
+    
+    return(results)
     
 def searchUsers(findUser):
     print('Looking for user ' + findUser)
