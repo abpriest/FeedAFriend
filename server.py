@@ -187,7 +187,7 @@ def updatepro():
     if(request.form['confirmpassword'] != '' and request.form['newpassword'] != '' ):
         print("in password")
         if(request.form['confirmpassword'] == request.form['newpassword']):
-            results=cur.mogrify("UPDATE users SET password = %s WHERE username = %s", 
+            results=cur.mogrify("UPDATE users SET password = crypt(%s, gen_salt('bf')) WHERE username = %s", 
                 (request.form['newpassword'], session['user']))
             cur.execute(results)
             print(results)

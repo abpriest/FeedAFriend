@@ -15,6 +15,7 @@
 {% endblock %}
 
 {% block content %}
+
  <div class="row">
         
         <div class="col-md-12">
@@ -30,8 +31,17 @@
                     <tr align="right"><td>Name: <input type="text" id="name" name="name" size=63%></></td></tr>
                     <tr align="right"><td>New Password: <input type="password" id="newpassword" name="newpassword" size=63%></></td></tr>
                     <tr align="right"><td>Confirm Password: <input type="password" id="confirmpassword" name="confirmpassword" size=63%></></td></tr>
-                    <tr align="center"><td>User Type: <input type="radio" id="usertype" name="usertype" value="Giver"> Giver
-                                <input type="radio" id="usertype" name="usertype" value="Receiver"> Receiver</td></tr>
+                    <tr align="center">
+                    {% for userT in userT %}
+                    {% if userT[0] == 'Giver' %}           
+                        <td>User Type: <input type="radio" id="usertype" name="usertype" value="Giver" checked> Giver
+                        <input type="radio" id="usertype" name="usertype" value="Receiver"> Receiver</td>
+                    {% elif userT[0] == 'Receiver' %}
+                        <td>User Type: <input type="radio" id="usertype" name="usertype" value="Giver"> Giver
+                        <input type="radio" id="usertype" name="usertype" value="Receiver" checked> Receiver</td>
+                    {% endif %}
+                    {% endfor %}
+                    </tr>
                     <tr align="center"><td><input type="submit" value="Done Editing"/></td></tr>
                 </form>
 					   </tbody>
