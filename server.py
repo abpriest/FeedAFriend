@@ -90,6 +90,17 @@ def connectToDB():
   except:
     print("Can't connect to database")
 
+@app.route('/home')
+def home():
+    profinfo=getProf()
+    userT=getUserT()
+    breakfast=getBreak()
+    lunch=getLunch()
+    dinner=getDinner()
+                
+    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
+    
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     conn = connectToDB()
@@ -441,7 +452,7 @@ def getDinner():
         print("Could not retrieve dinner information.")
 
 @app.route('/')
-def home():
+def home2():
 
  #print (time.strftime("%I:%M:%S"))
  #now = time.strftime("%c")
