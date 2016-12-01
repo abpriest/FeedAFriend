@@ -26,11 +26,11 @@
               <tbody align="justify">
                 <form method="POST" action="/updateprofile">
 
-                    <tr align="right">{{message}}</tr>
-                    <tr align="right"><td>Username: <input type="text" id="username" name="username" size=63%></td></tr>
-                    <tr align="right"><td>Name: <input type="text" id="name" name="name" size=63%></></td></tr>
-                    <tr align="right"><td>New Password: <input type="password" id="newpassword" name="newpassword" size=63%></></td></tr>
-                    <tr align="right"><td>Confirm Password: <input type="password" id="confirmpassword" name="confirmpassword" size=63%></></td></tr>
+                    <tr align="left">{{message}}</tr>
+                    <tr align="left"><td>Username: <input type="text" id="username" name="username" size=63%></td></tr>
+                    <tr align="left"><td>Name: <input type="text" id="name" name="name" size=63%></></td></tr>
+                    <tr align="left"><td>New Password: <input type="password" id="newpassword" name="newpassword" size=63%></></td></tr>
+                    <tr align="left"><td>Confirm Password: <input type="password" id="confirmpassword" name="confirmpassword" size=63%></></td></tr>
                     <tr align="center">
                     {% for userT in userT %}
                     {% if userT[0] == 'Giver' %}           
