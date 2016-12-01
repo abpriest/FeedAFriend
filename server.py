@@ -11,8 +11,6 @@ from flask import Flask, render_template, request, session
 app = Flask(__name__)
 app.secret_key = os.urandom(24).encode('hex')
 
-socketio = SocketIO(app) #socket -N8
-
 def connectToDB():
   connectionString = 'dbname=feedfriend user=student password=mealswipes123 host=localhost'
   print connectionString
@@ -118,7 +116,7 @@ def updatepro():
     if(request.form['confirmpassword'] != '' and request.form['newpassword'] != '' ):
         print("in password")
         if(request.form['confirmpassword'] == request.form['newpassword']):
-            results=cur.mogrify("UPDATE users SET password = crypt(%s, gen_salt('bf')) WHERE username = %s", 
+            results=cur.mogrify("UPDATE users SET password = %s WHERE username = %s", 
                 (request.form['newpassword'], session['user']))
             cur.execute(results)
             print(results)
