@@ -11,6 +11,77 @@ from flask import Flask, render_template, request, session
 app = Flask(__name__)
 app.secret_key = os.urandom(24).encode('hex')
 
+
+socketio = SocketIO(app) #socket -N8
+
+
+#connects the socket from the server side ##########################################################
+@socketio.on('connect')
+def socketConnect():
+    print 'Connected from server'
+    
+@socketio.on('sSearch')
+def search(findMe):
+    print('Looking for ' + findMe)
+    
+    if findMe == 'Breakfast' or findMe == 'Lunch' or findMe == 'Dinner':
+        print(findMe)
+        results = searchMealTime(findMe)
+    else:
+        results = searchUsers(findMe)
+  
+    if len(results) == 0:
+        results = [[-1,'No results']]
+        print(results)
+    else:
+        print(results)
+    
+    emit('found', results)
+
+def searchMealTime(findMealTime):
+    print("looking for meal times")
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #print('booyah')
+        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
+            
+        cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (findMealTime))
+        
+    except:
+        print ('search failed')
+        
+    results=cur.fetchall()
+        
+    #print (results)
+    
+    return(results)
+    
+def searchUsers(findUser):
+    print('Looking for user ' + findUser)
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #print('booyah')
+        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
+            
+        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findUser))
+        
+    except:
+        print ('search failed')
+        
+    results=cur.fetchall()
+        
+    #print (results)
+    
+    return(results)
+    
+#####################################################################################################
+    
 def connectToDB():
   connectionString = 'dbname=feedfriend user=student password=mealswipes123 host=localhost'
   print connectionString

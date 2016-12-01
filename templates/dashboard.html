@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="App"><!-- socket -N8 -->
 <head>
-  <title>NomNomNom</title>
+  <title>Dashboard | Feed-a-Friend</title>
    <link rel="shortcut icon" href="../static/img/header-bg.jpg">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -113,7 +113,7 @@
         <div class="form-group input-group">
           <!-- Socket -N8 -->
           <!--<form ng-submit="search()">-->
-            <input type="text" ng-model="searchFor" class="form-control" placeholder="Search..">
+            <input type="text" ng-model="searchFor" class="form-control" placeholder="Search...">
             <span class="input-group-btn">
               <input class="btn btn-default" type="submit" ng-disabled="!searchFor" value="Search">
             </span>
@@ -146,47 +146,7 @@
 </div>
 </div>
 </div>
-      <div class="well">
-        <p><a href="#">Interests</a></p>
-        
-        {% if userT == "g" %}
-        <table align="center">
-          <td><a href="#">Give</a></td>
-          <td><label class="switch">
-                syn<input type="checkbox" name="checkfield" id="g0-01" unchecked>
-                <div class="slider round"></div>
-              </label></td>
-          <td><a href="#">Take</a></td>
-        </table>
-       {% else %}
-       <table align="center">
-          <td><a href="#">Give</a></td>
-          <td><label class="switch">
-                syn<input type="checkbox" name="checkfield" id="g0-01"  checked>
-                <div class="slider round"></div>
-              </label></td>
-          <td><a href="#">Take</a></td>
-        </table>
-       {% endif %}
-       
-<script>
-/*function doalert(checkboxElem) {
-  if (checkboxElem.checked) {
-    alert("checked")
-  } else {
-    alert("notchecked")
-  }
-}*/
-</script>
-        <p>
-          <span class="label label-default">News</span>
-          <span class="label label-primary">W3Schools</span>
-          <span class="label label-success">Labels</span>
-          <span class="label label-info">Football</span>
-          <span class="label label-warning">Gaming</span>
-          <span class="label label-danger">Friends</span>
-        </p>
-      </div>
+      
       <div class="alert alert-success fade in">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
         <p><strong>Ey!</strong></p>
@@ -213,6 +173,7 @@ function doalert(checkboxElem) {
     <div class="col-sm-2 well">
       <div class="thumbnail">
         <p><strong>Messages</strong></p>
+        <!--<p ng-repeat="res in found" ng-bind="res"></p>
         <p>Welcome</p>
         <p>Welcome</p>
         <p>Welcome</p>
@@ -222,14 +183,10 @@ function doalert(checkboxElem) {
         <p>Welcome</p>
         <p>Welcome</p>
         <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
+        <p>Welcome</p>-->
       </div>
       
       <div class="well">
-        <p>ADS</p>
-        <input type="text" class="form-control" placeholder="Search..">
-        <button class="btn btn-primary">Info</button>
       </div>
     </div>
   </div>
