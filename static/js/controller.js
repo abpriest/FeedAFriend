@@ -5,6 +5,11 @@ App.controller('AppController', function($scope){
     
     $scope.found = [];
     $scope.found2 = [];
+    $scope.name = '';
+    $scope.mealType = '';
+    $scope.timeOne = '';
+    $scope.timeTwo = '';
+    $scope.req = [];
     
     socket.on('connect', function(){
         console.log('Connected from controller'); 
@@ -30,9 +35,10 @@ App.controller('AppController', function($scope){
         $scope.found = res;
         var i;
     
+        
         if ($scope.found[0].length > 2){
             for (i =0; i< $scope.found.length; i++){
-                $scope.found2[i] = $scope.found[i][3] + " is available for " + $scope.found[i][0] + " from " + $scope.found[i][1] + " - " + $scope.found[i][2];
+                $scope.found2[i] = {'mealType':$scope.found[i][0], 'name': $scope.found[i][3], 'timeOne': $scope.found[i][1], 'timeTwo':$scope.found[i][2]};//$scope.found[i][3] + " is available for " + $scope.found[i][0] + " from " + $scope.found[i][1] + " - " + $scope.found[i][2];
                 console.log("~ " + $scope.found[i][3] + " is available from " + $scope.found[i][1] + " - " + $scope.found[i][2]); 
             }
         } else {
@@ -45,5 +51,13 @@ App.controller('AppController', function($scope){
         $scope.$apply();
         
     });
+    
+    $scope.request = function request(info){
+        console.log(info);
+        $scope.name = info['name'];
+        $scope.timeOne = info['timeOne'];
+        $scope.timeTwo = info['timeTwo'];
+        //$scope.$apply();
+    };
     
 });

@@ -130,7 +130,7 @@ def login():
                 breakfast=getBreak()
                 lunch=getLunch()
                 dinner=getDinner()
-                
+                #return render_template('newsFeed.html', breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
                 return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
                 
             #Incorrect password or not a user
@@ -388,7 +388,7 @@ def getUserT():
         userT=cur.fetchall()
         conn.commit()
         print(userT)
-        return userT
+        return(userT) #There's a bug somewhere in this function
         
     except:
         print("Could not retrieve userT information.")

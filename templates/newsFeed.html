@@ -2,56 +2,76 @@
 
 {% block profile %}
 
-    <div class="panel-body">Username: {{username}}</div>
+  <div class="panel-body">Username: {{username}}</div>
+  
   {% for profinfo in profinfo %}
     <div class="panel-body">Name: {{profinfo['name']}}</div>
     <div class="panel-body">Email: {{profinfo['email']}}</div>
   {% endfor %}
+  
   {% for userT in userT %}
     <div class="panel-body">User Type: {{userT[0]}}</div>
   {% endfor %}
-    <div class="panel-footer"><a href="/editprofile">Edit Profile</a></div>
+  <div class="panel-footer"><a href="/editprofile">Edit Profile</a></div>
   
 {% endblock %}
 
 {% block content %}
-{% for userT in userT %}
-{% if userT[0] == 'Giver' %}
-<!-- giver -->
-
-<div class="row">
-        
-  <div class="col-md-12">
-    <div class="well">  
-      <p ng-repeat="res in found2" ng-bind="res"></p>
-    </div>
-  </div>
-</div>
-
+  {% for userT in userT %}
+    {% if userT[0] == 'Giver' %}
+    <!-- giver -->
       <div class="row">
-        
         <div class="col-md-12">
-        <div class="well">  
+          <div class="well">  
             <h4>Your Availability</h4>
             <table style="width:100%">
               <tbody align="center">
+                
                 {% for breakfast in breakfast %}
-                    <tr align="center"><td>Breakfast: {{breakfast['starttime']}} - {{breakfast['endtime']}}</td></tr>
+                  <tr align="center"><td>Breakfast: {{breakfast['starttime']}} - {{breakfast['endtime']}}</td></tr>
                 {% endfor %}
                 
                 {% for lunch in lunch %}
-                    <tr align="center"><td>Lunch: {{lunch['starttime']}} - {{lunch['endtime']}}</td></tr>
+                  <tr align="center"><td>Lunch: {{lunch['starttime']}} - {{lunch['endtime']}}</td></tr>
                 {% endfor %}
                 
                 {% for dinner in dinner %}
-                    <tr align="center"><td>Dinner: {{dinner['starttime']}} - {{dinner['endtime']}}</td></tr>
+                  <tr align="center"><td>Dinner: {{dinner['starttime']}} - {{dinner['endtime']}}</td></tr>
                 {% endfor %}
+                
                 <tr align="center"><td><a href="/editavailability">Edit Available</a> </td></tr>
-					   </tbody>
-					</table>
-
+              </tbody>
+					  </table>
           </div>
         </div>    
+      </div>
+      
+      <!-- Search Results -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="well">
+            <table>
+              <tbody>
+                <tr ng-repeat="res in found2" >
+                  <td><a data-toggle="collapse" href="#collapse2" ng-click="request(res)" ng-bind="res.name"></a> is available for</td>
+                  <td ng-bind="res.mealType"></td>
+                  <td>from</td>
+                  <td ng-bind="res.timeOne"></td>
+                  <td>-</td>
+                  <td ng-bind="res.timeTwo"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+    
+          <!-- Request collapse -->
+          <div id="collapse2" class="panel-collapse collapse">
+            <div class="panel-body">Request Meal From: <b><p ng-bind="name"></p></b></div>
+            <div class="panel-body"><b><a data-toggle="collapse" href="#collapse2">Yes</a></b> or <a data-toggle="collapse" href="#collapse2">No</a></div>
+            
+          </div>
+  
+        </div>
       </div>
 </div>
 
@@ -72,6 +92,7 @@
 					     </tr>
 					     <tr>
 					       <td><p ng-repeat="res in found2" ng-bind="res"></p></td>
+					       <td>Search Results</td>
 					     </tr>
 					     </tbody>
 					</table>
