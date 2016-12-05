@@ -9,6 +9,7 @@ App.controller('AppController', function($scope){
     $scope.mealType = '';
     $scope.timeOne = '';
     $scope.timeTwo = '';
+    $scope.avId = '';
     $scope.userRequests = [];
     $scope.allGivers = [];
     
@@ -61,13 +62,14 @@ App.controller('AppController', function($scope){
         $scope.timeOne = info['timeOne'];
         $scope.timeTwo = info['timeTwo'];
         $scope.mealType = info['mealType'];
+        $scope.avId = info['id'];
         //$scope.$apply();
     };
     
     $scope.sendReq = function sendReq(){
-        console.log($scope.name + ' - ' + $scope.mealType);
-        //tmp = {'' };
-        //emit('sendReq', );
+        console.log($scope.name + ' - ' + $scope.avId);
+        var tmp = {'avId': $scope.avId};
+        socket.emit('sendReq', tmp);
     };
     
     socket.on('allAvailability', function(av){

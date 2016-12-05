@@ -90,7 +90,7 @@ CREATE TABLE requests (
 );
 
 GRANT ALL ON requests TO student;
-GRANT ALL ON requested_id_seq TO student;
+GRANT ALL ON requests_id_seq TO student;
 
 INSERT INTO users(username, password) VALUES('testuser', crypt('testpassword', gen_salt('bf')));
 INSERT INTO profile(name, email, usertype, userid) VALUES('testuser', 'test@umw.edu', (SELECT id FROM usertype WHERE userT = 'Giver'), (SELECT id FROM users WHERE username = 'testuser'));
