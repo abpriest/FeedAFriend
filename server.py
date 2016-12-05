@@ -14,12 +14,24 @@ app.secret_key = os.urandom(24).encode('hex')
 
 socketio = SocketIO(app) #socket -N8
 
+allAva = []
 
 #connects the socket from the server side ##########################################################
 @socketio.on('connect')
 def socketConnect():
     print 'Connected from server'
-    
+
+@socketio.on('isRecvr')
+def checkRecv():
+    tmp = getUserT()
+    if tmp[0][0] == "Receiver":
+        if len(session['allAva']) > 0:
+            print('Sending all availability')
+            print(session['allAva'])
+            emit('allAvailability', session['allAva'])
+    else:
+        print(tmp[0][0])
+
 @socketio.on('sSearch')
 def search(findMe):
     print('Looking for ' + findMe)
@@ -48,7 +60,7 @@ def searchMealTime(findMealTime):
         #print('booyah')
         #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
             
-        cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (findMealTime))
+        cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (findMealTime))
         
     except:
         print ('search failed')
@@ -130,6 +142,8 @@ def login():
                 breakfast=getBreak()
                 lunch=getLunch()
                 dinner=getDinner()
+                
+                
                 #return render_template('newsFeed.html', breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
                 return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
                 
@@ -228,7 +242,7 @@ def updatepro():
     breakfast=getBreak()
     lunch=getLunch()
     dinner=getDinner()
-                
+    
     return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
     
 @app.route('/editavailability')
@@ -388,11 +402,43 @@ def getUserT():
         userT=cur.fetchall()
         conn.commit()
         print(userT)
-        return(userT) #There's a bug somewhere in this function
+        
+        # Using SocketIO to display All Available users to Receivers - N8
+        if userT[0][0] == "Receiver":
+            #print('Hi')
+            session['allAva'] = getAllAvailability()
+            
+            #print(session['allAva'])
+            #print(allAv)
+            #emit('allAvailability', allAv)
+        #####
+        
+        return(userT)
         
     except:
         print("Could not retrieve userT information.")
+
+## SocketStuff
+def getAllAvailability():
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id ORDER BY users.username")
+        allAv = cur.fetchall()
         
+        #print(session['allAva'])
+      #  print(allAv)
+    except:
+        print('Error with retrieving all availablity')
+    
+    #session['allAva'] = allAv
+    #print(session['allAva'])
+    #emit('allAvailability', allAv)
+    return(allAv)
+
+#####
+
 def getBreak():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
