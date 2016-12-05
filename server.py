@@ -26,17 +26,17 @@ def search(findMe):
     
     if findMe == 'Breakfast' or findMe == 'Lunch' or findMe == 'Dinner':
         print(findMe)
-        results = searchMealTime(findMe)
+        searchMealTime(findMe)
     else:
-        results = searchUsers(findMe)
+        searchUsers(findMe)
   
-    if len(results) == 0:
-        results = [[-1,'No results']]
-        print(results)
-    else:
-        print(results)
+  #if len(results) == 0:
+  #      results = [[-1,'No results']]
+  #      print(results)
+  #  else:
+   #     print(results)
     
-    emit('found', results)
+   # emit('found', results)
 
 def searchMealTime(findMealTime):
     print("looking for meal times")
@@ -54,11 +54,12 @@ def searchMealTime(findMealTime):
         print ('search failed')
         
     results=cur.fetchall()
-        
+    
+    for r in results:
+        tmp = {'user':r['username'], 'meal':r['meal'], 'start':r['starttime'], 'end':r['endtime']}
+        emit('found', results)
     #print (results)
-    
-    return(results)
-    
+
 def searchUsers(findUser):
     print('Looking for user ' + findUser)
     
@@ -69,16 +70,19 @@ def searchUsers(findUser):
         #print('booyah')
         #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
             
-        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findUser))
+        cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE users.username LIKE '%%%s%%'" % (findUser))
         
     except:
         print ('search failed')
         
     results=cur.fetchall()
+    for r in results:
+        tmp = {'user':r['username'], 'meal':r['meal'], 'start':r['starttime'], 'end':r['endtime']}
+        emit('found', tmp)
         
     #print (results)
     
-    return(results)
+    #return(results)
     
 #####################################################################################################
     
@@ -159,6 +163,12 @@ def editpro():
 def updatepro():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    if(request.form['pic'] != ''):
+        thedata = open(request.form['pic'], 'rb').read()
+        sql = "INSERT INTO profile (image) VALUES (%s) WHERE userid = (SELECT id FROM users WHERE username = %s)"
+        cur.execute(sql, (thedata,request.form['username']))
+        conn.commit()
     
     #change username
     if(request.form['username'] != '' ):

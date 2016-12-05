@@ -1,6 +1,11 @@
 {% extends "dashboard.html" %}
 
 {% block profile %}
+    <p class="panel-title"><a data-toggle="collapse" href="#collapse1">{{username}}</a></p>
+    <img src="static/images/bird.jpg" class="img-circle" height="65" width="65" alt="Avatar">
+  
+    </div>
+    <div id="collapse1" class="panel-collapse collapse">
 
   <div class="panel-body">Username: {{username}}</div>
   
@@ -91,8 +96,11 @@
                 
 					     </tr>
 					     <tr>
-					       <td><p ng-repeat="res in found2" ng-bind="res"></p></td>
-					       <td>Search Results</td>
+					       <td><p ng-repeat="res in found2" ng-bind="res">
+					       <b ng-bind="res.user"></b>:&nbsp;
+                 <span ng-bind="res.meal"></span>
+                 <button type="submit" value="request">Request</button>
+					       </p></td>
 					     </tr>
 					     </tbody>
 					</table>
