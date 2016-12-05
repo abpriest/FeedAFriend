@@ -57,7 +57,12 @@ App.controller('AppController', function($scope){
         $scope.name = info['name'];
         $scope.timeOne = info['timeOne'];
         $scope.timeTwo = info['timeTwo'];
+        $scope.mealType = info['mealType'];
         //$scope.$apply();
+    };
+    
+    $scope.sendReq = function sendReq(){
+        console.log($scope.name + ' - ' + $scope.mealType);
     };
     
 });
