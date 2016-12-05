@@ -9,10 +9,13 @@ App.controller('AppController', function($scope){
     $scope.mealType = '';
     $scope.timeOne = '';
     $scope.timeTwo = '';
-    $scope.req = [];
+    $scope.userRequests = [];
+    $scope.allGivers = [];
     
     socket.on('connect', function(){
-        console.log('Connected from controller'); 
+        console.log('Connected from controller');
+        console.log('Checking user type');
+        socket.emit('isRecvr');
     });
     
     $scope.search = function search() {
@@ -63,6 +66,24 @@ App.controller('AppController', function($scope){
     
     $scope.sendReq = function sendReq(){
         console.log($scope.name + ' - ' + $scope.mealType);
+        //tmp = {'' };
+        //emit('sendReq', );
     };
+    
+    socket.on('allAvailability', function(av){
+        //console.log('Hello');
+        //console.log(av[0]);
+        var i;
+        for (i =0; i< av.length; i++){
+                //$scope.found2[i] = "~ " + $scope.found[i][1];
+                console.log("~ " + av[i]); 
+                var tmp = {'name': av[i][3],'mealType': av[i][0],'timeOne': av[i][1],'timeTwo': av[i][2],'id': av[i][4]};
+                $scope.allGivers[i] = tmp;
+        }
+        
+        $scope.$apply();
+        
+    });
+    
     
 });

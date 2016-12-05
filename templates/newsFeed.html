@@ -93,14 +93,16 @@
               <tbody align="center">
               <tr align="justify">
                 <td><label>Available Givers: </label></td>
-                
+                <td></td>
 					     </tr>
-					     <tr>
-					       <td><p ng-repeat="res in found2" ng-bind="res">
-					       <b ng-bind="res.user"></b>:&nbsp;
-                 <span ng-bind="res.meal"></span>
-                 <button type="submit" value="request">Request</button>
-					       </p></td>
+
+					     <tr ng-repeat="giv in allGivers"> <!-- DISPLAY ALL -->
+					       <!--<td><p ng-repeat="res in found2" ng-bind="res"></p></td>-->
+					       <td ng-bind="giv.name"></td>
+					       <td ng-bind="giv.mealType"></td>
+					       <td ng-bind="giv.timeOne"></td>
+					       <td ng-bind="giv.timeTwo"></td>
+					       
 					     </tr>
 					     </tbody>
 					</table>
