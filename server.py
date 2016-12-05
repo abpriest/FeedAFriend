@@ -30,7 +30,18 @@ def checkRecv():
             print(session['allAva'])
             emit('allAvailability', session['allAva'])
     else:
+        getAllReqs()
         print(tmp[0][0])
+
+def getAllReqs():
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #cur.execute("SELECT availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (session['user']))
+        print
+    except:
+        print
 
 @socketio.on('sSearch')
 def search(findMe):
