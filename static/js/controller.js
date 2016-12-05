@@ -41,8 +41,8 @@ App.controller('AppController', function($scope){
         
         if ($scope.found[0].length > 2){
             for (i =0; i< $scope.found.length; i++){
-                $scope.found2[i] = {'mealType':$scope.found[i][0], 'name': $scope.found[i][3], 'timeOne': $scope.found[i][1], 'timeTwo':$scope.found[i][2]};//$scope.found[i][3] + " is available for " + $scope.found[i][0] + " from " + $scope.found[i][1] + " - " + $scope.found[i][2];
-                console.log("~ " + $scope.found[i][3] + " is available from " + $scope.found[i][1] + " - " + $scope.found[i][2]); 
+                $scope.found2[i] = {'mealType':$scope.found[i][0], 'name': $scope.found[i][3], 'timeOne': $scope.found[i][1], 'timeTwo':$scope.found[i][2], 'id': $scope.found[i][4]};//$scope.found[i][3] + " is available for " + $scope.found[i][0] + " from " + $scope.found[i][1] + " - " + $scope.found[i][2];
+                console.log("~ " + $scope.found[i][3] + " is available from " + $scope.found[i][1] + " - " + $scope.found[i][2] + " ID = " + $scope.found[i][4]); 
             }
         } else {
             for (i =0; i< $scope.found.length; i++){
