@@ -164,10 +164,15 @@ def updatepro():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
+    print(request.form['pic'])
     if(request.form['pic'] != ''):
+        print("test1")
         thedata = open(request.form['pic'], 'rb').read()
+        print("test2")
         sql = "INSERT INTO profile (image) VALUES (%s) WHERE userid = (SELECT id FROM users WHERE username = %s)"
+        print("test3")
         cur.execute(sql, (thedata,request.form['username']))
+        print("test4")
         conn.commit()
     
     #change username
