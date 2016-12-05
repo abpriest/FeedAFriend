@@ -2,7 +2,7 @@
 <html lang="en" ng-app="App"><!-- socket -N8 -->
 <head>
   <title>Dashboard | Feed-a-Friend</title>
-   <link rel="shortcut icon" href="../static/img/header-bg.jpg">
+  <link rel="shortcut icon" href="../static/img/header-bg.jpg">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -130,106 +130,103 @@
 <body>
 
 <div class="container" ng-controller="AppController"><!-- socket -N8 -->
-
-
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">Feed A Friend</a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Home</a></li>
-        <li><a href="#">Messages</a></li>
-        <!-- <li>Hello {{searchFor}} </li>  socket testing -N8 -->
-      </ul>
-      <form class="navbar-form navbar-right" role="search" ng-submit="search()">
-        <div class="form-group input-group">
-          <!-- Socket -N8 -->
-          <!--<form ng-submit="search()">-->
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/home">Feed A Friend</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/home">Home</a></li>
+          <li><a href="#">Messages</a></li>
+          <!-- <li>Hello {{searchFor}} </li>  socket testing -N8 -->
+        </ul>
+        <form class="navbar-form navbar-right" role="search" ng-submit="search()">
+          <div class="form-group input-group">
+            <!-- Socket -N8 -->
+            <!--<form ng-submit="search()">-->
             <input type="text" ng-model="searchFor" class="form-control" placeholder="Search...">
             <span class="input-group-btn">
               <input class="btn btn-default" type="submit" ng-disabled="!searchFor" value="Search">
             </span>
-          <!--</form>-->
-          
-        </div>
-      </form>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="/"><span class="glyphicon glyphicon-user"></span> Logout </a></li>
-      </ul>
+            <!--</form>-->
+          </div>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/"><span class="glyphicon glyphicon-user"></span> Logout </a></li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
-<div class="container text-center">
-  <div class="row">
-    <div class="col-sm-3 well">
+  </nav>
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-sm-3 well">
 
-<div class="panel-group">
-<div class="panel panel-default">
-<div class="panel-heading">
+        <div class="panel-group">
+          <div class="panel panel-default">
+            <div class="panel-heading">
   
-      
-        <p class="panel-title"><a data-toggle="collapse" href="#collapse1">My Profile</a></p>
-        <img src="static/images/bird.jpg" class="img-circle" height="65" width="65" alt="Avatar">
-     
-      
-</div>
-<div id="collapse1" class="panel-collapse collapse">
-  {% block profile %}{% endblock %}
-</div>
-</div>
-</div>
-      
-      <div class="alert alert-success fade in">
-        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-        <p><strong>Ey!</strong></p>
-        People are looking at your profile. Find out who.
-      </div>
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
-    </div>
-    <div class="col-sm-7">
-    
-    <script>
-function doalert(checkboxElem) {
-  if (checkboxElem.checked) {
-    alert("checked")
-  } else {
-    alert("notchecked")
-  }
-}
-</script>
+              <p class="panel-title"><a data-toggle="collapse" href="#collapse1">{{username}}</a></p>
+              <img src="static/images/bird.jpg" class="img-circle" height="65" width="65" alt="Avatar">
   
-  {% block content %} {% endblock %}
-    
-    <div class="col-sm-2 well">
-      <div class="thumbnail">
-        <p><strong>Messages</strong></p>
-        <!--<p ng-repeat="res in found" ng-bind="res"></p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>
-        <p>Welcome</p>-->
-      </div>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+              {% block profile %}{% endblock %}
+            </div>
+          </div>
+        </div>
       
-      <div class="well">
+        <div class="alert alert-success fade in">
+          <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+          <p><strong>Ey!</strong></p>
+            People are looking at your profile. Find out who.
+        </div>
+        <p><a href="#">Link</a></p>
+        <p><a href="#">Link</a></p>
+        <p><a href="#">Link</a></p>
+      </div>
+      <div class="col-sm-7">
+    
+        <!-- former toggle -->
+        <script>
+          function doalert(checkboxElem) {
+            if (checkboxElem.checked) {
+              alert("checked")
+            } else {
+              alert("notchecked")
+            }
+          }
+        </script>
+  
+        {% block content %} {% endblock %}
+    
+        <div class="col-sm-2 well">
+          <div class="thumbnail">
+            <p><strong>Messages</strong></p>
+            <!--<p ng-repeat="res in found" ng-bind="res"></p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>
+            <p>Welcome</p>-->
+          </div>
+      
+          <div class="well">
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+
 
 <footer class="container-fluid text-center">
    <div class="container">
@@ -258,8 +255,8 @@ function doalert(checkboxElem) {
             </div>
         </div>
 </footer>
+  </div><!-- socket -N8 -->
 
-</div><!-- socket -N8 -->
 </body>
 </html>
 
