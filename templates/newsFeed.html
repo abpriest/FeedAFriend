@@ -75,6 +75,24 @@
       </div>
 </div>
 
+<div class="col-sm-2 well">
+          <div class="thumbnail">
+            <p><strong>Requests Received</strong></p>
+            <table></table>
+            <tr ng-repeat="r in requestReceived"> <!-- DISPLAY ALL -->
+					       <!--<td><p ng-repeat="res in found2" ng-bind="res"></p></td>-->
+					       <td ng-bind="r.name"></td>
+					       <td ng-bind="r.email"></td>
+					       <td ng-bind="r.mealType"></td>
+					       <td ng-bind="r.starttime"></td>
+					       <td ng-bind="r.endtime"></td>
+            </table>
+          </div>
+      
+          <div class="well">
+          </div>
+        </div>
+
 {% elif userT[0] == 'Receiver' %}
 <!-- taker -->
 
@@ -134,6 +152,25 @@
       </div>
 
 </div>
+
+<div class="col-sm-2 well">
+          <div class="thumbnail">
+            <p><strong>Requests Sent</strong></p>
+            <table>
+            <tr ng-repeat="r in requestSent"> <!-- DISPLAY ALL -->
+					       <!--<td><p ng-repeat="res in found2" ng-bind="res"></p></td>-->
+					       <td ng-bind="r.name"></td>
+					       <td ng-bind="r.email"></td>
+					       <td ng-bind="r.mealType"></td>
+					       <td ng-bind="r.starttime"></td>
+					       <td ng-bind="r.endtime"></td>
+					 </table>
+          </div>
+      
+          <div class="well">
+          </div>
+        </div>
 {% endif %}
 {% endfor %}
+
 {% endblock %}

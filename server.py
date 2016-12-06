@@ -30,7 +30,18 @@ def checkRecv():
             print(session['allAva'])
             emit('allAvailability', session['allAva'])
     else:
+        getAllReqs()
         print(tmp[0][0])
+
+def getAllReqs():
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        #cur.execute("SELECT availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (session['user']))
+        print
+    except:
+        print
 
 @socketio.on('sSearch')
 def search(findMe):
@@ -81,7 +92,7 @@ def searchUsers(findUser):
         #print('booyah')
         #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
             
-        cur.execute("SELECT id, username FROM users WHERE username LIKE '%%%s%%'" % (findUser))
+        cur.execute("SELECT availability.mealtype, availability.starttime, availability.endtime, users.username FROM availability JOIN users ON availability.userid = users.id WHERE users.username LIKE '%%%s%%'" % (findUser))
         
     except:
         print ('search failed')
@@ -120,8 +131,49 @@ def send_request(info):
     
     print('Request Sent')
     
+@socketio.on('getReqSent')
+def get_requestSent(info):
+    print(session['user'])
     
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
+    try:
+        cur.execute("SELECT (SELECT username FROM users WHERE id = availability_id) AS username, (SELECT email FROM profile WHERE userid = availability_id) AS email, (SELECT mealtype FROM availability WHERE id = availability_id) AS mealtype, (SELECT starttime FROM availability WHERE id = availability_id) AS starttime, (SELECT endtime FROM availability WHERE id = availability_id) AS endtime FROM requests JOIN users ON requests.requested_id = users.id WHERE users.username = '%s'", (session['user'],))
+        requestSent = cur.fetchall()
+        conn.commit()
+         
+        for r in requestSent:
+            tmp = {'username':r['username'],'email':r['email'], 'mealtype':r['mealtype'], 'starttime':r['starttime'], 'endtime':r['endtime']}
+            print(tmp)
+            emit('getSent', tmp)
+    except:
+        print("Error retreiving request sent list")
+    
+    print('Request Sent List')    
+    
+@socketio.on('getReqReceived')
+def get_requestReceived(info):
+    print(session['user'])
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    try:
+        cur.execute("SELECT (SELECT username FROM users WHERE id = requested_id) AS username, (SELECT email FROM profile WHERE userid = requested_id) AS email, (SELECT mealtype FROM availability WHERE id = availability_id) AS mealtype, (SELECT starttime FROM availability WHERE id = availability_id) AS starttime, (SELECT endtime FROM availability WHERE id = availability_id) AS endtime FROM requests JOIN users ON requests.availability_id = users.id WHERE users.username = '%s'", (session['user'],))
+        requestReceived = cur.fetchall()
+        conn.commit()
+        
+        for r in requestReceived:
+            tmp = {'username':r['username'],'email':r['email'], 'mealtype':r['mealtype'], 'starttime':r['starttime'], 'endtime':r['endtime']}
+            print(tmp)
+            emit('getReceived', tmp)
+        
+    except:
+        print("Error retreiving request received list")
+    
+    print('Request Received List')  
+ 
 #####################################################################################################
     
 def connectToDB():

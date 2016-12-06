@@ -13,8 +13,12 @@ App.controller('AppController', function($scope){
     $scope.userRequests = [];
     $scope.allGivers = [];
     
+    $scope.requestSent = [];
+    $scope.requestReceived = [];
+    
     socket.on('connect', function(){
-        console.log('Connected from controller'); 
+        console.log('Connected from controller');
+    
     });
     
     $scope.search = function search() {
@@ -65,13 +69,35 @@ App.controller('AppController', function($scope){
     };
     
     $scope.sendReq = function sendReq(){
-<<<<<<< HEAD
-        console.log($scope.name + ' - ' + $scope.mealType);
-=======
         console.log($scope.name + ' - ' + $scope.avId);
         var tmp = {'avId': $scope.avId};
         socket.emit('sendReq', tmp);
->>>>>>> be1ac75977c05f597e3dee593fc80484017e48ee
     };
+
+    socket.on('allAvailability', function(av){
+        //console.log('Hello');
+        //console.log(av[0]);
+        var i;
+        for (i =0; i< av.length; i++){
+                //$scope.found2[i] = "~ " + $scope.found[i][1];
+                console.log("~ " + av[i]); 
+                var tmp = {'name': av[i][3],'mealType': av[i][0],'timeOne': av[i][1],'timeTwo': av[i][2],'id': av[i][4]};
+                $scope.allGivers[i] = tmp;
+        }
+        
+        $scope.$apply();
+        
+    });
     
+    socket.on('getSent', function(tmp){
+        console.log('getSent')
+        $scope.requestSent.push(tmp);
+        $scope.$apply();
+    });
+    
+    socket.on('getReceived', function(tmp){
+        console.log('getReceived')
+        $scope.requestReceived.push(tmp);
+        $scope.$apply();
+    });
 });
