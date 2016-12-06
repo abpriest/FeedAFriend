@@ -92,7 +92,7 @@ def searchUsers(findUser):
         #print('booyah')
         #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
             
-        cur.execute("SELECT availability.mealtype, availability.starttime, availability.endtime, users.username FROM availability JOIN users ON availability.userid = users.id WHERE users.username LIKE '%%%s%%'" % (findUser))
+        cur.execute("SELECT (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime, availability.endtime, users.username FROM availability JOIN users ON availability.userid = users.id WHERE users.username LIKE '%%%s%%'" % (findUser))
         
     except:
         print ('search failed')
@@ -139,7 +139,7 @@ def get_requestSent(info):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        cur.execute("SELECT (SELECT username FROM users WHERE id = availability_id) AS username, (SELECT email FROM profile WHERE userid = availability_id) AS email, (SELECT mealtype FROM availability WHERE id = availability_id) AS mealtype, (SELECT starttime FROM availability WHERE id = availability_id) AS starttime, (SELECT endtime FROM availability WHERE id = availability_id) AS endtime FROM requests JOIN users ON requests.requested_id = users.id WHERE users.username = '%s'", (session['user'],))
+        cur.execute("SELECT (SELECT username FROM users WHERE id = availability_id) AS username, (SELECT email FROM profile WHERE userid = availability_id) AS email, (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime AS starttime, availability.endtime FROM requests JOIN availability ON requests.availability_id = availability.id JOIN users ON requests.requested_id = users.id WHERE users.username = '%s'", (session['user'],))
         requestSent = cur.fetchall()
         conn.commit()
          
@@ -160,7 +160,7 @@ def get_requestReceived(info):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        cur.execute("SELECT (SELECT username FROM users WHERE id = requested_id) AS username, (SELECT email FROM profile WHERE userid = requested_id) AS email, (SELECT mealtype FROM availability WHERE id = availability_id) AS mealtype, (SELECT starttime FROM availability WHERE id = availability_id) AS starttime, (SELECT endtime FROM availability WHERE id = availability_id) AS endtime FROM requests JOIN users ON requests.availability_id = users.id WHERE users.username = '%s'", (session['user'],))
+        cur.execute("SELECT (SELECT username FROM users WHERE id = requested_id) AS username, (SELECT email FROM profile WHERE userid = availability_id) AS email, (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime AS starttime, availability.endtime FROM requests JOIN availability ON requests.availability_id = availability.id JOIN users ON requests.availability_id = users.id WHERE users.username = '%s'", (session['user'],))
         requestReceived = cur.fetchall()
         conn.commit()
         
