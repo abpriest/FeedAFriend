@@ -80,6 +80,18 @@ CREATE TABLE availability (
 GRANT ALL ON availability TO student;
 GRANT ALL ON availability_id_seq TO student;
 
+-- Table for Requests
+DROP TABLE IF EXISTS requests;
+CREATE TABLE requests (
+    id serial NOT NULL,
+    availability_id integer REFERENCES availability,
+    requested_id integer REFERENCES users,
+    PRIMARY KEY (id)
+);
+
+GRANT ALL ON requests TO student;
+GRANT ALL ON requests_id_seq TO student;
+
 INSERT INTO users(username, password) VALUES('testuser', crypt('testpassword', gen_salt('bf')));
 INSERT INTO profile(name, email, usertype, userid) VALUES('testuser', 'test@umw.edu', (SELECT id FROM usertype WHERE userT = 'Giver'), (SELECT id FROM users WHERE username = 'testuser'));
 

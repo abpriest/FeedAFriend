@@ -84,6 +84,36 @@ def searchUsers(findUser):
     
     #return(results)
     
+@socketio.on('sendReq')
+def send_request(info):
+    print(info[u'avId'])
+    print(session['user'])
+    
+    conn = connectToDB()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    try:
+        cur.execute("SELECT id FROM users WHERE username LIKE '%%%s%%'" % (session['user']))
+        requestId = cur.fetchall()
+        conn.commit()
+    except:
+        print('Error retrieving ID')
+    
+    print(requestId[0][0])
+    
+    try:
+        query=cur.mogrify("""INSERT INTO requests(availability_id, requested_id) VALUES (%s, %s)""", 
+            (info[u'avId'], requestId[0][0]) )
+        print(query)
+        cur.execute(query)
+        conn.commit()
+    except Exception as e:
+        print(e)
+        print('Error inserting into requests')
+    
+    print('Request Sent')
+    
+    
+    
 #####################################################################################################
     
 def connectToDB():

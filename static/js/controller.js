@@ -9,7 +9,13 @@ App.controller('AppController', function($scope){
     $scope.mealType = '';
     $scope.timeOne = '';
     $scope.timeTwo = '';
+<<<<<<< HEAD
     $scope.req = [];
+=======
+    $scope.avId = '';
+    $scope.userRequests = [];
+    $scope.allGivers = [];
+>>>>>>> be1ac75977c05f597e3dee593fc80484017e48ee
     
     socket.on('connect', function(){
         console.log('Connected from controller'); 
@@ -58,11 +64,18 @@ App.controller('AppController', function($scope){
         $scope.timeOne = info['timeOne'];
         $scope.timeTwo = info['timeTwo'];
         $scope.mealType = info['mealType'];
+        $scope.avId = info['id'];
         //$scope.$apply();
     };
     
     $scope.sendReq = function sendReq(){
+<<<<<<< HEAD
         console.log($scope.name + ' - ' + $scope.mealType);
+=======
+        console.log($scope.name + ' - ' + $scope.avId);
+        var tmp = {'avId': $scope.avId};
+        socket.emit('sendReq', tmp);
+>>>>>>> be1ac75977c05f597e3dee593fc80484017e48ee
     };
     
 });
