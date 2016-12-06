@@ -185,7 +185,11 @@
         <div class="panel-group">
           <div class="panel panel-default">
             <div class="panel-heading">
-
+              <p class="panel-title"><a data-toggle="collapse" href="#collapse1">{{username}}</a></p>
+              <img src="static/images/bird.jpg" class="img-circle" height="65" width="65" alt="Avatar">
+  
+                </div>
+                <div id="collapse1" class="panel-collapse collapse">
               {% block profile %}{% endblock %}
             </div>
           </div>

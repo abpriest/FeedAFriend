@@ -9,13 +9,9 @@ App.controller('AppController', function($scope){
     $scope.mealType = '';
     $scope.timeOne = '';
     $scope.timeTwo = '';
-<<<<<<< HEAD
-    $scope.req = [];
-=======
     $scope.avId = '';
     $scope.userRequests = [];
     $scope.allGivers = [];
->>>>>>> be1ac75977c05f597e3dee593fc80484017e48ee
     
     socket.on('connect', function(){
         console.log('Connected from controller'); 
