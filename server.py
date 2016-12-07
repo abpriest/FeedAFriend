@@ -15,11 +15,13 @@ app.secret_key = os.urandom(24).encode('hex')
 socketio = SocketIO(app) #socket -N8
 
 allAva = []
+users = {}
 
 #connects the socket from the server side ##########################################################
 @socketio.on('connect')
 def socketConnect():
     print 'Connected from server'
+     session['uuid'] = uuid.uuid1() 
 
 @socketio.on('isRecvr')
 def checkRecv():
@@ -201,13 +203,16 @@ def login():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     fail = 'false'
-
+    
     if request.method == 'POST':
         try:
             session['user']=request.form['username']
             session['pass']=request.form['password']
             print(session['user'])
             print(session['pass'])
+            
+            session['username']=username
+            users[session['uuid']]={'username': username}
             
             #Check for matching username and password
             query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, password) " , 
