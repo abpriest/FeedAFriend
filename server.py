@@ -222,6 +222,8 @@ def login():
 
     if request.method == 'POST':
         try:
+            session['uuid'] = uuid.uuid1()
+            print(session['uuid'])
             session['user']=request.form['username']
             session['pass']=request.form['password']
             print(session['user'])
