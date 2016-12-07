@@ -20,10 +20,6 @@ allSentReq = []
 
 users = {}
 
-session['uuid'] = uuid.uuid1()
-print(session['uuid'])
-session['username'] = 'New User'
-
 #connects the socket from the server side ##########################################################
 @socketio.on('connect')
 def socketConnect():
@@ -80,18 +76,13 @@ def searchMealTime(findMealTime):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        #print('booyah')
-        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
-            
-        cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (findMealTime))
+       cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (findMealTime))
         
     except:
         print ('search failed')
         
     results=cur.fetchall()
         
-    #print (results)
-    
     return(results)
     
 def searchUsers(findUser):
@@ -101,9 +92,7 @@ def searchUsers(findUser):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        #print('booyah')
-        #query = cur.mogrify("SELECT * FROM users WHERE username = %s" , (findUser))
-            
+        
         cur.execute("SELECT (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime, availability.endtime, users.username FROM availability JOIN users ON availability.userid = users.id WHERE users.username LIKE '%%%s%%'" % (findUser))
         
     except:
@@ -111,8 +100,6 @@ def searchUsers(findUser):
         
     results=cur.fetchall()
         
-    #print (results)
-    
     return(results)
     
 @socketio.on('sendReq')
@@ -125,7 +112,7 @@ def send_request(info):
     try:
         cur.execute("SELECT id FROM users WHERE username LIKE '%%%s%%'" % (users[session['uuid']]['username']))
         requestId = cur.fetchall()
-        #conn.commit()
+        
     except:
         print('Error retrieving ID')
     
@@ -137,6 +124,7 @@ def send_request(info):
         print(query)
         cur.execute(query)
         conn.commit()
+    
     except Exception as e:
         print(e)
         print('Error inserting into requests')
@@ -144,7 +132,6 @@ def send_request(info):
     print('Request Sent')
     get_requestSent()
     
-#@socketio.on('getReqSent')
 def get_requestSent():
     print(users[session['uuid']]['username'])
     
@@ -156,7 +143,6 @@ def get_requestSent():
         requestSent = cur.fetchall()
         conn.commit()
          
-        
     except Exception as e:
         print(e)
         print("Error retreiving request sent list")
@@ -168,11 +154,7 @@ def get_requestSent():
     except Exception as e:
         print(e)
         
-    #for r in requestSent:
-    #tmp = {'username':r['username'],'email':r['email'], 'mealtype':r['mealtype'], 'starttime':r['starttime'], 'endtime':r['endtime']}
     print(requestSent)
-    #        allSentReq[r] = tmp
-            #emit('getSent', tmp)
     
     print('Request Sent List')
     emit('getSent', requestSent)
@@ -229,7 +211,9 @@ def login():
 
     if request.method == 'POST':
         try:
-            
+            session['uuid'] = uuid.uuid1()
+            print(session['uuid'])
+            session['username'] = 'New User'
             
             
             
@@ -495,10 +479,6 @@ def signup2():
       return render_template('signup.html')
     conn.commit()
 
-#print (time.strftime("%I:%M:%S"))
-#now = time.strftime("%c")
-#print ("Current time %s"  % now )'''
-
 def getProf():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -525,14 +505,9 @@ def getUserT():
         
         # Using SocketIO to display All Available users to Receivers - N8
         if userT[0][0] == "Receiver":
-            #print('Hi')
+           
             session['allAva'] = getAllAvailability()
             
-            #print(session['allAva'])
-            #print(allAv)
-            #emit('allAvailability', allAv)
-        #####
-        
         return(userT)
         
     except:
@@ -547,14 +522,9 @@ def getAllAvailability():
         cur.execute("SELECT mealtype.meal, availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id ORDER BY users.username")
         allAv = cur.fetchall()
         
-        #print(session['allAva'])
-      #  print(allAv)
     except:
         print('Error with retrieving all availablity')
-    
-    #session['allAva'] = allAv
-    #print(session['allAva'])
-    #emit('allAvailability', allAv)
+
     return(allAv)
 
 #####
@@ -620,15 +590,10 @@ def getDinner():
 @app.route('/')
 def home2():
 
- #print (time.strftime("%I:%M:%S"))
- #now = time.strftime("%c")
- #print ("Current time %s"  % now )
  return render_template('login.html')
-
 
 
 # start the server
 if __name__ == '__main__':
     socketio.run(app,host=os.getenv('IP', '0.0.0.0'), port =int(os.getenv('PORT', 8080)), debug=True)
-    #app.run(host=os.getenv('IP', '0.0.0.0'), port =int(os.getenv('PORT', 8080)), debug=True)
-
+   
