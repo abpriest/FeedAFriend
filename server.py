@@ -15,6 +15,7 @@ app.secret_key = os.urandom(24).encode('hex')
 socketio = SocketIO(app) #socket -N8
 
 allAva = []
+allSentReq = []
 
 #connects the socket from the server side ##########################################################
 @socketio.on('connect')
@@ -28,6 +29,7 @@ def checkRecv():
         if len(session['allAva']) > 0:
             print('Sending all availability')
             print(session['allAva'])
+            get_requestSent()
             emit('allAvailability', session['allAva'])
     else:
         getAllReqs()
@@ -36,12 +38,15 @@ def checkRecv():
 def getAllReqs():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    
+    print('getAllReqs')
     try:
-        #cur.execute("SELECT availability.starttime, availability.endtime, users.username, availability.id FROM availability JOIN mealtype ON availability.mealtype = mealtype.id JOIN users ON availability.userid = users.id WHERE mealtype.meal = '%s'" % (session['user']))
-        print
-    except:
-        print
+        cur.execute("SELECT r.id, mealtype.meal, availability.starttime, availability.endtime, t1.username, profile.email, t2.username FROM requests r JOIN availability ON r.availability_id = availability.id JOIN mealtype ON availability.mealtype = mealtype.id JOIN users t1 ON availability.userid = t1.id JOIN profile ON r.requested_id = profile.id JOIN users t2 ON requested_id = t2.id WHERE t1.username = '%s'" % (session['user']))
+        results = cur.fetchall()
+        print(results)
+    except Exception as e:
+        print(e)
+    
+    emit('getReceived', results)
 
 @socketio.on('sSearch')
 def search(findMe):
@@ -113,7 +118,7 @@ def send_request(info):
     try:
         cur.execute("SELECT id FROM users WHERE username LIKE '%%%s%%'" % (session['user']))
         requestId = cur.fetchall()
-        conn.commit()
+        #conn.commit()
     except:
         print('Error retrieving ID')
     
@@ -130,27 +135,40 @@ def send_request(info):
         print('Error inserting into requests')
     
     print('Request Sent')
+    get_requestSent()
     
-@socketio.on('getReqSent')
-def get_requestSent(info):
+#@socketio.on('getReqSent')
+def get_requestSent():
     print(session['user'])
     
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        cur.execute("SELECT (SELECT username FROM users WHERE id = availability_id) AS username, (SELECT email FROM profile WHERE userid = availability_id) AS email, (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime AS starttime, availability.endtime FROM requests JOIN availability ON requests.availability_id = availability.id JOIN users ON requests.requested_id = users.id WHERE users.username = '%s'", (session['user'],))
+        cur.execute("SELECT id FROM users WHERE username = %s", (session['user'],))
         requestSent = cur.fetchall()
         conn.commit()
          
-        for r in requestSent:
-            tmp = {'username':r['username'],'email':r['email'], 'mealtype':r['mealtype'], 'starttime':r['starttime'], 'endtime':r['endtime']}
-            print(tmp)
-            emit('getSent', tmp)
-    except:
+        
+    except Exception as e:
+        print(e)
         print("Error retreiving request sent list")
     
-    print('Request Sent List')    
+    try:
+        cur.execute("SELECT requests.id, mealtype.meal, availability.starttime, availability.endtime, users.username, profile.email, requests.requested_id FROM requests JOIN availability ON requests.availability_id = availability.id JOIN mealtype ON availability.mealtype = mealtype.id JOIN profile ON availability.userid = profile.userid JOIN users ON availability.userid = users.id WHERE requests.requested_id = %s", (requestSent[0]) )
+        requestSent = cur.fetchall()
+        print()
+    except Exception as e:
+        print(e)
+        
+    #for r in requestSent:
+    #tmp = {'username':r['username'],'email':r['email'], 'mealtype':r['mealtype'], 'starttime':r['starttime'], 'endtime':r['endtime']}
+    print(requestSent)
+    #        allSentReq[r] = tmp
+            #emit('getSent', tmp)
+    
+    print('Request Sent List')
+    emit('getSent', requestSent, broadcast=True)
     
 @socketio.on('getReqReceived')
 def get_requestReceived(info):
