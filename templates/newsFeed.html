@@ -12,14 +12,16 @@
   {% for userT in userT %}
     <div class="panel-body">User Type: {{userT[0]}}</div>
   {% endfor %}
+  
   <div class="panel-footer"><a href="/editprofile">Edit Profile</a></div>
   
 {% endblock %}
 
+
 {% block content %}
   {% for userT in userT %}
     {% if userT[0] == 'Giver' %}
-    <!-- giver -->
+      <!-- giver -->
       <div class="row">
         <div class="col-md-12">
           <div class="well">  
@@ -63,67 +65,65 @@
               </tbody>
             </table>
           </div>
-    
-          <!-- Request collapse -->
+     
+           <!-- Request collapse -->
           <div id="collapse2" class="panel-collapse collapse">
             <div class="panel-body">Request Meal From: <b><p ng-bind="name"></p></b></div>
             <div class="panel-body"><b><a data-toggle="collapse" href="#collapse2" ng-click="sendReq()">Yes</a></b> or <a data-toggle="collapse" href="#collapse2">No</a></div>
-            
           </div>
-  
         </div>
       </div>
-</div>
-
-<div class="col-sm-2 well">
-          <div class="thumbnail">
+      
+      <div class="row">
+        <div class="col-md-12">
+          <div class="well">
             <p><strong>Requests Received</strong></p>
-            <table>
-            <tr ng-repeat="r in requestReceived"> <!-- DISPLAY ALL -->
-					       <!--<td><p ng-repeat="res in found2" ng-bind="res"></p></td>-->
-					       <td ng-bind="r.name"></td>
-					       <td ng-bind="r.email"></td>
-					       <td ng-bind="r.mealType"></td>
-					       <td ng-bind="r.starttime"></td>
-					       <td ng-bind="r.endtime"></td>
+            <table align="center">
+              <tbody align="center">
+                <tr align="center" ng-repeat="r in allReqs">
+                  <td align="center" ng-bind="r.username"></td>
+                  <td align="center" ng-bind="r.email"></td>
+                  <td align="center" ng-bind="r.mealtype"></td>
+                  <td align="center" ng-bind="r.starttime"></td>
+                  <td align="center" ng-bind="r.endtime"></td>
+                </tr>
+              </tbody>
             </table>
           </div>
-      
-          <div class="well">
-          </div>
         </div>
+      </div>
+  
+</div>
+
+
 
 {% elif userT[0] == 'Receiver' %}
-<!-- taker -->
-
+      <!-- taker -->
       <div class="row">
-        
         <div class="col-md-12">
-        <div class="well">  
-<!-- Search bar for givers -->
+          <div class="well">  
+  
+            <!-- Search bar for givers -->
             <h3>Search for Givers</h3>
             <table style="width:100%">
               <tbody align="center">
-              <tr align="justify">
-                <td><label>Available Givers: </label></td>
-                <td></td>
-					     </tr>
-					       
-					     <tr ng-repeat="giv in allGivers"> <!-- DISPLAY ALL -->
-					       <!--<td><p ng-repeat="res in found2" ng-bind="res"></p></td>-->
-					       <td ng-bind="giv.name"></td>
-					       <td ng-bind="giv.mealType"></td>
-					       <td ng-bind="giv.timeOne"></td>
-					       <td ng-bind="giv.timeTwo"></td>
-					       
-					     </tr>
-					     </tbody>
-					</table>
-
-            
+                <tr align="justify">
+                  <td><label>Available Givers: </label></td>
+                  <td></td>
+                </tr>
+                
+                <tr ng-repeat="giv in allGivers">
+                  <td ng-bind="giv.name"></td>
+                  <td ng-bind="giv.mealType"></td>
+                  <td ng-bind="giv.timeOne"></td>
+                  <td ng-bind="giv.timeTwo"></td>
+                </tr>
+              </tbody>
+					  </table>
           </div>
         </div>    
       </div>
+      
       <div class="row">
         <div class="col-md-12">
           <div class="well">
@@ -145,32 +145,32 @@
           <div id="collapse2" class="panel-collapse collapse">
             <div class="panel-body">Request Meal From: <b><p ng-bind="name"></p></b></div>
             <div class="panel-body"><b><a data-toggle="collapse" href="#collapse2" ng-click="sendReq()">Yes</a></b> or <a data-toggle="collapse" href="#collapse2">No</a></div>
-            
           </div>
-  
+        </div>
+      </div>
+       
+      <div class="row">
+        <div class="col-md-12">
+          <div class="well">
+            <p><strong>Requests Received</strong></p>
+            <table align="center">
+              <tbody align="center">
+                <tr align="center" ng-repeat="r in userRequests">
+                  <td align="center" ng-bind="r.username"></td>
+                  <td align="center" ng-bind="r.mealtype"></td>
+                  <td align="center" ng-bind="r.starttime"></td>
+                  <td align="center" ng-bind="r.endtime"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
 </div>
 
-<div class="col-sm-2 well">
-          <div class="thumbnail">
-            <p><strong>Requests Sent</strong></p>
-            <table>
-            <tr ng-repeat="r in requestSent"> <!-- DISPLAY ALL -->
-					       <!--<td><p ng-repeat="res in found2" ng-bind="res"></p></td>-->
-					       <td ng-bind="r.name"></td>
-					       <td ng-bind="r.email"></td>
-					       <td ng-bind="r.mealType"></td>
-					       <td ng-bind="r.starttime"></td>
-					       <td ng-bind="r.endtime"></td>
-					 </table>
-          </div>
-      
-          <div class="well">
-          </div>
-        </div>
 {% endif %}
+
 {% endfor %}
 
 {% endblock %}
