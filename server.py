@@ -211,16 +211,18 @@ def login():
     
     if request.method == 'POST':
         try:
-            session['uuid'] = uuid.uuid1()
+            #session['uuid'] = uuid.uuid1()
             print(session['uuid'])
-            session['username'] = 'New User'
-            
-            session['user']=request.form['username']
+            session['username'] = request.form['username']
+            print("t1" + session['username'])
+            #session['user']=request.form['username']
             session['pass']=request.form['password']
-            print(session['user'])
+            
             print(session['pass'])
             
             users[session['uuid']] = {'username': request.form['username']}
+            print(users[session['uuid']]['username'])
+            
             print("!!! " + users[session['uuid']]['username'])
             
             #Check for matching username and password
