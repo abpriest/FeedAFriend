@@ -92,7 +92,6 @@ def searchUsers(findUser):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        
         cur.execute("SELECT (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime, availability.endtime, users.username FROM availability JOIN users ON availability.userid = users.id WHERE users.username LIKE '%%%s%%'" % (findUser))
         
     except:
@@ -215,9 +214,6 @@ def login():
             print(session['uuid'])
             session['username'] = 'New User'
             
-            
-            
-            
             session['user']=request.form['username']
             session['pass']=request.form['password']
             print(session['user'])
@@ -242,12 +238,9 @@ def login():
                 lunch=getLunch()
                 dinner=getDinner()
                 
-                
-                
                 for l in users:
                     print(users[l]['username'])
                     
-                #return render_template('newsFeed.html', breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'])
                 return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'])
                 
             #Incorrect password or not a user
@@ -340,7 +333,6 @@ def updatepro():
         cur.execute(results)
         conn.commit()
         
-    
     profinfo=getProf()
     userT=getUserT()
     breakfast=getBreak()
@@ -589,9 +581,7 @@ def getDinner():
 
 @app.route('/')
 def home2():
-
  return render_template('login.html')
-
 
 # start the server
 if __name__ == '__main__':
