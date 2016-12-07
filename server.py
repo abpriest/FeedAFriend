@@ -11,11 +11,18 @@ from flask import Flask, render_template, request, session
 app = Flask(__name__)
 app.secret_key = os.urandom(24).encode('hex')
 
+app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app) #socket -N8
 
 allAva = []
 allSentReq = []
+
+users = {}
+
+session['uuid'] = uuid.uuid1()
+print(session['uuid'])
+session['username'] = 'New User'
 
 #connects the socket from the server side ##########################################################
 @socketio.on('connect')
@@ -40,7 +47,7 @@ def getAllReqs():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     print('getAllReqs')
     try:
-        cur.execute("SELECT r.id, mealtype.meal, availability.starttime, availability.endtime, t1.username, profile.email, t2.username FROM requests r JOIN availability ON r.availability_id = availability.id JOIN mealtype ON availability.mealtype = mealtype.id JOIN users t1 ON availability.userid = t1.id JOIN profile ON r.requested_id = profile.id JOIN users t2 ON requested_id = t2.id WHERE t1.username = '%s'" % (session['user']))
+        cur.execute("SELECT r.id, mealtype.meal, availability.starttime, availability.endtime, t1.username, profile.email, t2.username FROM requests r JOIN availability ON r.availability_id = availability.id JOIN mealtype ON availability.mealtype = mealtype.id JOIN users t1 ON availability.userid = t1.id JOIN profile ON r.requested_id = profile.id JOIN users t2 ON requested_id = t2.id WHERE t1.username = '%s'" % (users[session['uuid']]['username']))
         results = cur.fetchall()
         print(results)
     except Exception as e:
@@ -111,12 +118,12 @@ def searchUsers(findUser):
 @socketio.on('sendReq')
 def send_request(info):
     print(info[u'avId'])
-    print(session['user'])
+    print(users[session['uuid']]['username'])
     
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     try:
-        cur.execute("SELECT id FROM users WHERE username LIKE '%%%s%%'" % (session['user']))
+        cur.execute("SELECT id FROM users WHERE username LIKE '%%%s%%'" % (users[session['uuid']]['username']))
         requestId = cur.fetchall()
         #conn.commit()
     except:
@@ -139,13 +146,13 @@ def send_request(info):
     
 #@socketio.on('getReqSent')
 def get_requestSent():
-    print(session['user'])
+    print(users[session['uuid']]['username'])
     
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        cur.execute("SELECT id FROM users WHERE username = %s", (session['user'],))
+        cur.execute("SELECT id FROM users WHERE username = %s", (users[session['uuid']]['username'],))
         requestSent = cur.fetchall()
         conn.commit()
          
@@ -172,13 +179,13 @@ def get_requestSent():
     
 @socketio.on('getReqReceived')
 def get_requestReceived(info):
-    print(session['user'])
+    print(users[session['uuid']]['username'])
     
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        cur.execute("SELECT (SELECT username FROM users WHERE id = requested_id) AS username, (SELECT email FROM profile WHERE userid = availability_id) AS email, (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime AS starttime, availability.endtime FROM requests JOIN availability ON requests.availability_id = availability.id JOIN users ON requests.availability_id = users.id WHERE users.username = '%s'", (session['user'],))
+        cur.execute("SELECT (SELECT username FROM users WHERE id = requested_id) AS username, (SELECT email FROM profile WHERE userid = availability_id) AS email, (SELECT meal FROM mealtype WHERE id = availability.mealtype) AS mealtype, availability.starttime AS starttime, availability.endtime FROM requests JOIN availability ON requests.availability_id = availability.id JOIN users ON requests.availability_id = users.id WHERE users.username = '%s'", (users[session['uuid']]['username'],))
         requestReceived = cur.fetchall()
         conn.commit()
         
@@ -210,7 +217,7 @@ def home():
     lunch=getLunch()
     dinner=getDinner()
                 
-    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
+    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'])
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -222,16 +229,22 @@ def login():
 
     if request.method == 'POST':
         try:
-            session['uuid'] = uuid.uuid1()
-            print(session['uuid'])
+            
+            
+            
+            
+            
             session['user']=request.form['username']
             session['pass']=request.form['password']
             print(session['user'])
             print(session['pass'])
             
+            users[session['uuid']] = {'username': request.form['username']}
+            print("!!! " + users[session['uuid']]['username'])
+            
             #Check for matching username and password
             query = cur.mogrify("SELECT * FROM users WHERE username = %s AND password = crypt(%s, password) " , 
-                (session['user'], session['pass']))
+                (users[session['uuid']]['username'], session['pass']))
             cur.execute(query)
             results=cur.fetchall()
             conn.commit()
@@ -246,8 +259,12 @@ def login():
                 dinner=getDinner()
                 
                 
-                #return render_template('newsFeed.html', breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
-                return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
+                
+                for l in users:
+                    print(users[l]['username'])
+                    
+                #return render_template('newsFeed.html', breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'])
+                return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'])
                 
             #Incorrect password or not a user
             else:
@@ -255,8 +272,9 @@ def login():
               print("Invalid username or password!")
               conn.rollback()
               return render_template('login.html', fail = fail)
-        except:
+        except Exception as e:
             print("Error login!")
+            print(e)
             conn.rollback()
             return render_template('login.html')
         conn.commit()
@@ -269,7 +287,7 @@ def editpro():
     breakfast=getBreak()
     lunch=getLunch()
     dinner=getDinner()
-    return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'], message = message1)   
+    return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'], message = message1)   
 
 @app.route('/updateprofile', methods=['POST'])
 def updatepro():
@@ -287,11 +305,11 @@ def updatepro():
         
         if(cur.rowcount == 0):
             results=cur.mogrify("UPDATE users SET username = %s WHERE username = %s", 
-                (request.form['username'], session['user']))
+                (request.form['username'], users[session['uuid']]['username']))
             cur.execute(results)
             print(results)
             conn.commit()
-            session['user']=request.form['username']
+            users[session['uuid']]['username']=request.form['username']
         else:
             profinfo=getProf()
             userT=getUserT()
@@ -299,13 +317,13 @@ def updatepro():
             lunch=getLunch()
             dinner=getDinner()
             message1=" Username taken."
-            return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'], message = message1)
+            return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'], message = message1)
     
     #change name
     if(request.form['name'] != ''):
         print("in name")
         results=cur.mogrify("UPDATE profile SET name = %s WHERE userid = (SELECT id FROM users WHERE username = %s)", 
-                (request.form['name'], session['user']))
+                (request.form['name'], users[session['uuid']]['username']))
         cur.execute(results)
         
         conn.commit()
@@ -315,7 +333,7 @@ def updatepro():
         print("in password")
         if(request.form['confirmpassword'] == request.form['newpassword']):
             results=cur.mogrify("UPDATE users SET password = crypt(%s, gen_salt('bf')) WHERE username = %s", 
-                (request.form['newpassword'], session['user']))
+                (request.form['newpassword'], users[session['uuid']]['username']))
             cur.execute(results)
             print(results)
             conn.commit()
@@ -327,13 +345,13 @@ def updatepro():
             lunch=getLunch()
             dinner=getDinner()
             message1=" Passwords do not match."
-            return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'], message = message1)
+            return render_template('editpro.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'], message = message1)
     
     #change usertype
     if(request.form['usertype'] != ''):
         print("in usertype")
         results=cur.mogrify("UPDATE profile SET usertype = (SELECT id FROM usertype WHERE userT = %s) WHERE userid = (SELECT id FROM users WHERE username = %s)", 
-                (request.form['usertype'], session['user']))
+                (request.form['usertype'], users[session['uuid']]['username']))
         print(results)
         cur.execute(results)
         conn.commit()
@@ -345,7 +363,7 @@ def updatepro():
     lunch=getLunch()
     dinner=getDinner()
     
-    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
+    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'])
     
 @app.route('/editavailability')
 def editavail():
@@ -356,26 +374,26 @@ def updateavail():
     conn = connectToDB()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
-    cur.execute("SELECT * FROM availability WHERE userid = (SELECT id FROM users WHERE username = %s)", (session['user'],))
+    cur.execute("SELECT * FROM availability WHERE userid = (SELECT id FROM users WHERE username = %s)", (users[session['uuid']]['username'],))
     cur.fetchall()
     conn.commit()
     if(cur.rowcount != 0):
-        cur.execute("DELETE FROM availability WHERE userid = (SELECT id FROM users WHERE username = %s)", (session['user'],))
+        cur.execute("DELETE FROM availability WHERE userid = (SELECT id FROM users WHERE username = %s)", (users[session['uuid']]['username'],))
         conn.commit()
         
     if(request.form['bstart'] != '' and request.form['bend'] != ''):
         cur.execute("""INSERT INTO availability(mealtype, starttime, endtime, userid) VALUES((SELECT id FROM mealtype WHERE meal = 'Breakfast'), %s, %s, (SELECT id FROM users WHERE username = %s))""", 
-            (request.form['bstart'], request.form['bend'], session['user']))
+            (request.form['bstart'], request.form['bend'], users[session['uuid']]['username']))
         conn.commit()
         
     if(request.form['lstart'] != '' and request.form['lend'] != ''):
         cur.execute("""INSERT INTO availability(mealtype, starttime, endtime, userid) VALUES((SELECT id FROM mealtype WHERE meal = 'Lunch'), %s, %s, (SELECT id FROM users WHERE username = %s))""", 
-            (request.form['lstart'], request.form['lend'], session['user']))
+            (request.form['lstart'], request.form['lend'], users[session['uuid']]['username']))
         conn.commit()
         
     if(request.form['dstart'] != '' and request.form['dend'] != ''):
         cur.execute("""INSERT INTO availability(mealtype, starttime, endtime, userid) VALUES((SELECT id FROM mealtype WHERE meal = 'Dinner'), %s, %s, (SELECT id FROM users WHERE username = %s))""", 
-            (request.form['dstart'], request.form['dend'], session['user']))
+            (request.form['dstart'], request.form['dend'], users[session['uuid']]['username']))
         conn.commit()
     
     profinfo=getProf()
@@ -384,7 +402,7 @@ def updateavail():
     lunch=getLunch()
     dinner=getDinner()
                 
-    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=session['user'])
+    return render_template('newsFeed.html', userT=userT, breakfast=breakfast, lunch=lunch, dinner=dinner, profinfo=profinfo, username=users[session['uuid']]['username'])
 
 @app.route('/signup')
 def signup():
@@ -486,7 +504,7 @@ def getProf():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        cur.execute("SELECT * FROM profile WHERE userid = (SELECT id from users WHERE username = %s)", (session['user'], ))
+        cur.execute("SELECT * FROM profile WHERE userid = (SELECT id from users WHERE username = %s)", (users[session['uuid']]['username'], ))
         conn.commit()
         profileinfo = cur.fetchall()
         print(profileinfo)
@@ -500,7 +518,7 @@ def getUserT():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     
     try:
-        cur.execute("SELECT userT FROM usertype WHERE id = (SELECT usertype FROM profile WHERE userid = (SELECT id FROM users WHERE username = %s))", (session['user'],))
+        cur.execute("SELECT userT FROM usertype WHERE id = (SELECT usertype FROM profile WHERE userid = (SELECT id FROM users WHERE username = %s))", (users[session['uuid']]['username'],))
         userT=cur.fetchall()
         conn.commit()
         print(userT)
@@ -547,7 +565,7 @@ def getBreak():
     
     try:
         cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = (SELECT id FROM mealtype WHERE meal = 'Breakfast') AND userid = (SELECT id FROM users WHERE username = %s) " , 
-                    (session['user'], ))
+                    (users[session['uuid']]['username'], ))
         breakfast = cur.fetchall()
         conn.commit()
                 
@@ -567,7 +585,7 @@ def getLunch():
     
     try:
         cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = (SELECT id FROM mealtype WHERE meal = 'Lunch') AND userid = (SELECT id FROM users WHERE username = %s) " , 
-                    (session['user'], ))
+                    (users[session['uuid']]['username'], ))
         lunch = cur.fetchall()
         conn.commit()
                 
@@ -586,7 +604,7 @@ def getDinner():
     
     try:
         cur.execute("SELECT starttime, endtime FROM availability WHERE mealtype = (SELECT id FROM mealtype WHERE meal = 'Dinner') AND userid = (SELECT id FROM users WHERE username = %s) " , 
-                    (session['user'], ))
+                    (users[session['uuid']]['username'], ))
         dinner = cur.fetchall()
         conn.commit()
                 
@@ -607,43 +625,7 @@ def home2():
  #print ("Current time %s"  % now )
  return render_template('login.html')
 
-#@app.route('/projects')
-#def showProj():
-#    developing = False
-#    return render_template('projects.html', active='projects', dev=developing)
-    
-#@app.route('/contact', methods=['GET', 'POST'])
-#def showContact():
-#    conn = connectToDB()
-#    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    #try:
-     #   cur.execute("select name, comment, color, permission from comments")
-    #except:
-     #   print("Error executing select")
-    #results = cur.fetchall()
-    
-#    if request.method == 'POST':
- #       try:
- #           cur.execute("""INSERT INTO comments (name, comment, color, permission) VALUES ('%s', '%s', %s, %s);""", (request.form['name'], request.form['comment'], request.form['color'], request.fetchall['permission']))
- #       except:
-  #          print("ERROR inserting into comments")
-  #          print("Tried: INSERT INTO comments (name, comment, color, permission) VALUES ('%s', '%s', %s, %s);" %
- #           (request.form['name'], request.form['comment'], request.form['color'], request.form['permission']) )
- #           conn.rollback()
- #       conn.commit()
-     #   x.append(request.form['inp'])
-#    try:
-#        cur.execute("select name, comment, color, permission from comments")
-#    except:
-#        print("Error executing select")
-#    results = cur.fetchall()
-#    print results
-#    for r in results:
-#        print r['name']
 
-#    conInfo = [{'label': 'Email: ','info': 'n8bitanimations@gmail.com'}, {'label': 'Facebook/Twitter/Instagram: ', 'info': '@n8bitanimations'}, {'label': 'Phone: ','info': '1(234) 567-8899'}, {'label':'Address: ','info': '456 Street City, ST 45236'}]
-#    return render_template('contact.html', active='contact', loop = conInfo, coms = results)
-    
 
 # start the server
 if __name__ == '__main__':
